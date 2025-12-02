@@ -3,1139 +3,757 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Quản Trị Ngân Hàng - Chuyên Nghiệp</title>
-    <!-- Tải Tailwind CSS -->
+    <title>Cờ Cá Ngựa Online (Ludo)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tải Icon Lucide -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Tải Chart.js (thư viện biểu đồ) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        /* Thiết lập font Inter cho giao diện chuyên nghiệp */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7f9;
-        }
-        /* Style cho thanh cuộn tùy chỉnh */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1; /* slate-300 */
-            border-radius: 0; /* Đã loại bỏ bo góc */
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background-color: #f8fafc; /* slate-50 */
-        }
-        .sidebar-item-active {
-            @apply bg-blue-600 text-white shadow-lg shadow-blue-500/50;
-        }
-        .card-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-        }
-        /* Khởi tạo icon Lucide */
-        [lucide] {
-            stroke-width: 2;
-            width: 20px;
-            height: 20px;
-        }
-
-        /* --- Style cho Link Bị Vô Hiệu Hóa (Disabled) --- */
-        .is-disabled {
-            /* 1. Làm mờ chữ */
-            @apply text-gray-400; 
-            /* Đảm bảo màu chữ không thay đổi khi hover, ghi đè Tailwind */
-            color: #9ca3af !important; 
-            /* Đảm bảo không có hiệu ứng nền khi hover, ghi đè Tailwind */
-            background-color: transparent !important;
-        }
-
-        /* 2. Hiển thị biểu tượng cấm thao tác khi hover */
-        .is-disabled:hover {
-            cursor: not-allowed !important;
-        }
-        
-        /* Đảm bảo icon bên trong link bị disabled cũng là màu xám */
-        .is-disabled [lucide] {
-            @apply text-gray-400; 
-        }
-
-        /* --- Style cho Loading Spinner --- */
-        .spinner {
-            border-top-color: #3b82f6; /* blue-500 */
-            border-left-color: #3b82f6;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .dice-face { display: grid; place-items: center; border-radius: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
     </style>
 </head>
-<body class="flex min-h-screen">
+<body class="bg-gray-100 h-screen flex flex-col items-center overflow-hidden">
 
-    <!-- Thanh Sidebar (Menu điều hướng) -->
-    <aside id="sidebar" class="w-64 bg-white p-4 flex flex-col justify-between transition-transform duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed md:relative z-30 h-screen custom-scrollbar">
-        <div class="flex flex-col">
-            <!-- Logo/Tiêu đề (ĐÃ THAY ĐỔI) -->
-            <div class="mb-8 border-b pb-4">
-                <!-- Phần Logo và Tên - ĐÃ CẬP NHẬT DÙNG HÌNH ẢNH LOGO -->
-                <div class="flex items-center">
-                    <img src="https://whatthelogo.com/storage/logos/techcombank-108052.webp" alt="Techcombank Logo" class="w-full h-auto max-h-12 object-contain" />
-                </div>
-                <!-- Slogan Vượt trội > mỗi ngày - ĐÃ CẬP NHẬT FONT SIZE và FONT WEIGHT -->
-                <p class="text-sm font-bold mt-2 text-center" style="color: #ff3333;">Vượt trội &gt; mỗi ngày</p>
-            </div>
-
-            <!-- Các mục điều hướng -->
-            <nav class="space-y-2">
-                <!-- Các mục HOẠT ĐỘNG -->
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 sidebar-item-active" data-page="tong_quan">
-                    <i lucide="layout-dashboard" class="mr-3"></i>
-                    Tổng Quan
-                </a>
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700" data-page="quan_ly_khach_hang">
-                    <i lucide="users" class="mr-3"></i>
-                    Quản Lý Khách Hàng
-                </a>
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700" data-page="giao_dich">
-                    <i lucide="arrow-left-right" class="mr-3"></i>
-                    Quản Lý Giao Dịch
-                </a>
-
-                <!-- Danh mục BỊ VÔ HIỆU HÓA: Hệ Thống & Vận Hành -->
-                <div class="pt-2 border-t mt-2">
-                    <p class="text-xs font-semibold uppercase text-gray-400 px-3 py-2">Hệ Thống & Vận Hành (Bảo trì)</p>
-                </div>
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 is-disabled" data-page="quan_tri_tai_khoan">
-                    <i lucide="shield-check" class="mr-3"></i>
-                    Quản lý Tài khoản & Bảo mật
-                </a>
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 is-disabled" data-page="phan_quyen">
-                    <i lucide="git-branch" class="mr-3"></i>
-                    Phân quyền Chi nhánh
-                </a>
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 is-disabled" data-page="quan_ly_quang_cao">
-                    <i lucide="megaphone" class="mr-3"></i>
-                    Quản lý Quảng cáo
-                </a>
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 is-disabled" data-page="quan_ly_yeu_cau">
-                    <i lucide="clipboard-list" class="mr-3"></i>
-                    Quản lý Yêu cầu
-                </a>
-
-                <!-- Danh mục BỊ VÔ HIỆU HÓA: Báo cáo & Cài Đặt -->
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 is-disabled" data-page="bao_cao_thong_ke">
-                    <i lucide="bar-chart-3" class="mr-3"></i>
-                    Báo cáo & Thống kê
-                </a>
-                <a href="#" class="sidebar-item group flex items-center p-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 is-disabled" data-page="cai_dat">
-                    <i lucide="settings" class="mr-3"></i>
-                    Cài Đặt Hệ Thống
-                </a>
-            </nav>
-        </div>
-
-        <!-- Thông tin người dùng/Đăng xuất -->
-        <div class="pt-4 border-t mt-4">
-            <div class="flex items-center p-2 bg-gray-50">
-                <img src="https://placehold.co/40x40/4f46e5/ffffff?text=AD" alt="Avatar" class="w-10 h-10 mr-3 rounded-full">
-                <div class="text-sm">
-                    <p class="font-semibold text-gray-800">ADMIN_ID_9871589</p>
-                    <p class="text-gray-500">QUẢN TRỊ CHI NHÁNH</p>
-                </div>
-            </div>
-            <button class="w-full mt-3 flex items-center justify-center p-2 text-red-600 bg-red-50 hover:bg-red-100 transition rounded-lg">
-                <i lucide="log-out" class="mr-2"></i>
-                Đăng Xuất
-            </button>
-        </div>
-    </aside>
-
-    <!-- Khu vực nội dung chính -->
-    <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-
-        <!-- Header Bar (Thanh trên cùng) -->
-        <header class="flex justify-between items-center mb-6">
-            <h1 id="page-title" class="text-3xl font-extrabold text-gray-800">Tổng Quan</h1>
-            <div class="flex items-center space-x-4">
-                <!-- Nút mở/đóng sidebar cho mobile -->
-                <button id="menu-toggle" class="md:hidden p-2 text-gray-600 hover:bg-gray-100 transition rounded-lg">
-                    <i lucide="menu"></i>
-                </button>
-                <!-- Nút thông báo -->
-                
-                <!-- Tìm kiếm (Thanh tìm kiếm chung, không phải cho khách hàng) -->
-                
+    <!-- App Container -->
+    <div id="app" class="w-full max-w-4xl h-full flex flex-col relative">
+        
+        <!-- Header -->
+        <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center z-10">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                🐴 Cờ Cá Ngựa Online
+            </h1>
+            <div id="room-info" class="text-sm hidden">
+                Phòng: <span id="display-room-id" class="font-mono font-bold text-yellow-300"></span>
             </div>
         </header>
 
-        <!-- BANNER THÔNG BÁO BẢO TRÌ -->
-        <div id="maintenance-alert" class="p-4 mb-6 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg flex items-start shadow-md">
-            <i lucide="alert-triangle" class="w-5 h-5 mr-3 flex-shrink-0 text-yellow-600"></i>
-            <div>
-                <p class="font-semibold">Thông báo bảo trì hệ thống</p>
-                <p class="text-sm">Hệ thống đang được bảo trì theo kế hoạch, không thể thực hiện một số tính năng nhất định.</p>
+        <!-- LOBBY SCREEN -->
+        <div id="lobby-screen" class="flex-1 flex flex-col items-center justify-center p-4 bg-gray-50 z-20">
+            <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-200">
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Tham gia phòng chơi</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tên phòng (Room ID)</label>
+                        <input type="text" id="room-input" placeholder="VD: 1234" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none uppercase font-mono">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tên của bạn</label>
+                        <input type="text" id="name-input" placeholder="Nhập tên..." class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Chọn màu quân</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="selectColor('red')" class="color-btn h-12 rounded-lg bg-red-500 hover:opacity-80 ring-offset-2 transition" data-color="red"></button>
+                            <button onclick="selectColor('green')" class="color-btn h-12 rounded-lg bg-green-500 hover:opacity-80 ring-offset-2 transition" data-color="green"></button>
+                            <button onclick="selectColor('yellow')" class="color-btn h-12 rounded-lg bg-yellow-400 hover:opacity-80 ring-offset-2 transition" data-color="yellow"></button>
+                            <button onclick="selectColor('blue')" class="color-btn h-12 rounded-lg bg-blue-500 hover:opacity-80 ring-offset-2 transition" data-color="blue"></button>
+                        </div>
+                        <p id="color-status" class="text-center text-sm mt-2 text-gray-500">Chưa chọn màu</p>
+                    </div>
+
+                    <button id="join-btn" onclick="joinGame()" disabled class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition">
+                        Vào Bàn Chơi
+                    </button>
+                    
+                    <p id="lobby-msg" class="text-red-500 text-center text-sm h-5"></p>
+                </div>
             </div>
         </div>
 
-        <!-- Nội dung của từng trang sẽ được hiển thị ở đây -->
-        <section id="content-area">
-            <!-- Mặc định là trang Tổng Quan -->
-        </section>
-
-        <!-- Overlay cho mobile menu -->
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-0 z-20 transition-opacity duration-300 md:hidden pointer-events-none"></div>
-
-    </main>
-
-    <script>
-        // Khởi tạo Lucide Icons (chuyển đổi các thẻ i[lucide] thành SVG)
-        lucide.createIcons();
-
-        // Cấu hình phân trang
-        const ROWS_PER_PAGE = 7; // 7 hàng/trang
-        let currentPage = 1;
-        
-        // New global state for filtering transactions
-        let currentFilteredTransactions = []; 
-        
-        // Biến để quản lý timeout của việc tìm kiếm (tránh spam)
-        let searchTimeout = null;
-
-        // --- Dữ liệu giả lập cho Khách hàng ---
-        // 20 khách hàng ban đầu (dùng làm seed)
-        // ĐÃ CẬP NHẬT: Số tài khoản bắt đầu bằng '5'
-        const INITIAL_CUSTOMERS = [
-            { name: 'Nguyễn Minh Phụng', id: 'KH00001', accountNumber: '3467686868', type: 'Cá nhân', balance: '25,398,342 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Đỗ Công Bằng', id: 'KH00300', accountNumber: '9945673967', type: 'Cá nhân', balance: '13,426,638 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
-            { name: 'Nguyễn Thị Thúy', id: 'KH03008', accountNumber: '19035001820019', type: 'Tiết kiệm cơ bản', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
-            { name: 'Công Ty Công Nghệ Việt Nam', id: 'KH00004', accountNumber: '30008686', type: 'Doanh nghiệp', balance: 'Không hiển thị số dư', status: 'Đã bút toán', biometrics: 'Đã xác minh. Cập nhật vào lúc 01/12/2025 10:08:32' },
-            { name: 'Trần Thanh Trình', id: 'KH00005', accountNumber: '19035694786013', type: 'Cá nhân', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
-            { name: 'Phạm Bích Ngọc', id: 'KH00006', accountNumber: '19034732011016', type: 'Cá nhân cao cấp', balance: '12,165,531,841 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Hồ Bảo Trân', id: 'KH00007', accountNumber: '148579717', type: 'Cá nhân', balance: '45,438,831 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
-            { name: 'Nguyễn Thị Hiền', id: 'KH030096', accountNumber: '19034928562010', type: 'Cá nhân Cao cấp', balance: '250,831,801 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Tống Thị Hiền', id: 'KH30013576', accountNumber: '19034763287011', type: 'Tiết kiệm lâu dài', balance: '8,283,973,108 VND', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
-            { name: 'Bùi Văn Bình', id: 'KH000300948', accountNumber: '6666080596', type: 'Cá nhân', balance: '5,935,581 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
-
-            { name: 'Ninh Thu Hương', id: 'KH00011', accountNumber: '5010666666', type: 'Cá nhân', balance: '6,531,145 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Văn Chung', id: 'KH00012', accountNumber: '501088888888', type: 'Cá nhân cao cấp', balance: '1,283,792,168 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Thị Thảo', id: 'KH00013', accountNumber: '501079797979', type: 'Cá nhân Cao cấp', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Chưa xác minh' },
-            { name: 'Phan Nguyễn Uyển My', id: 'KH0003002', accountNumber: '5010333333', type: 'Cá nhân', balance: '7,951,134 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Lê Thị Hiền', id: 'KH0300634', accountNumber: '5010888889', type: 'Doanh nghiệp lớn', balance: '15,834,344,924 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Bùi Hoàng Sơn', id: 'KH300753', accountNumber: '5010123456', type: 'Tiết kiệm cơ bản', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Chưa xác minh' },
-            { name: 'Nguyễn Thị Xuân', id: 'KH00017', accountNumber: '5010111111', type: 'Cá nhân', balance: '35,320,493 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Đỗ Thị Thảo', id: 'KH00018', accountNumber: '5010222222', type: 'Tiết kiệm lâu dài', balance: '68,183,924,460 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
-            { name: 'Nguyễn Ngọc Tài', id: 'KH0030082', accountNumber: '5012345678', type: 'Cá nhân Cao cấp', balance: '180,256,428 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Trần Đại Hiệp', id: 'KH00020', accountNumber: '50103999999999', type: 'Cá nhân Cao cấp', balance: '46,031,040,158,909 VND', status: 'Hoạt động', biometrics: 'Đang trong quá trình xác minh' },
-            { name: 'Lý Hồng Nhi', id: 'KH300967', accountNumber: '999967679', type: 'Cá nhân', balance: '18,256,428 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Thị Bích Liên', id: 'KH300812', accountNumber: '19071611605019', type: 'Cá nhân', balance: '6,834,963 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Tuấn Duy Quang', id: 'KH300975816', accountNumber: '19035521057016', type: 'Cá nhân', balance: '36,183,957 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Huỳnh Bảo Quyên', id: 'KH360930071', accountNumber: '19035521057016', type: 'Cá nhân', balance: '27,362,721 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Lê Hồng Mai', id: 'KH98300763', accountNumber: '19039982663010', type: 'Cá nhân', balance: '78,529,317 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Thị Thùy', id: 'KH3007963001', accountNumber: '19035001820019', type: 'Cá nhân', balance: '6,739,824 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Lý Thị Thu Hường', id: 'KH510930014', accountNumber: '8833182866', type: 'Cá nhân', balance: '10,919,752 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-        ];
-        
-        /** Tạo thêm 980 khách hàng giả lập (tổng cộng 1000) */
-        function generateAdditionalMockCustomers(startId, totalCount) {
-            const newCustomers = [];
-            const names = ['Quốc', 'Thị', 'Văn', 'Ngọc', 'Minh', 'Trang', 'Sơn', 'Hải', 'Linh', 'Bảo'];
-            const customerTypes = ['Cá nhân Cao cấp', 'Tiết kiệm cơ bản', 'Doanh nghiệp nhỏ', 'Cá nhân', 'Doanh nghiệp'];
-            const statuses = ['Hoạt động', 'Tạm khóa'];
-            const biometrics = ['Đã xác minh', 'Chưa xác minh','Đang trong quá trình xác minh'];
-
-            for (let i = startId; i <= totalCount; i++) {
-                //if(i == 300) continue;
-                //if(i-startId == 300) continue;
-                const idNum = String(i).padStart(5, '0');
-                const id = `KH${idNum}`;
-                
-                // Tăng số tài khoản: ĐÃ CẬP NHẬT BASE ĐỂ BẮT ĐẦU BẰNG '5'
-                const accountNumberBase = 5000000000;
-                // Bắt đầu từ 5000000000 và tăng dần
-                const accountNumber = String(accountNumberBase + (i - startId)).padStart(10, '0');
-                
-                const randomName = names[Math.floor(Math.random() * names.length)];
-                const name = `Nguyễn Văn ${randomName}`;
-                const type = customerTypes[Math.floor(Math.random() * customerTypes.length)];
-                const balance = (Math.floor(Math.random() * 500) * 1000000 + 500000).toLocaleString('vi-VN') + ' VND';
-                const status = statuses[Math.floor(Math.random() * statuses.length)];
-                const bio = biometrics[Math.floor(Math.random() * biometrics.length)];
-
-                newCustomers.push({ name, id, accountNumber, type, balance, status, biometrics: bio });
-            }
-            return newCustomers;
-        }
-
-        // TẠO TỔNG CỘNG 1000 KHÁCH HÀNG
-        const ADDITIONAL_CUSTOMERS = generateAdditionalMockCustomers(21, 1000);
-        const MOCK_CUSTOMERS = [...INITIAL_CUSTOMERS, ...ADDITIONAL_CUSTOMERS]; // Tổng cộng 1000
-
-        // --- Dữ liệu giả lập cho Giao dịch (1000 mục) ---
-        function generateMockTransactions(count) {
-            const transactions = [];
-            const names = ['Lê Văn Bình', 'Nguyễn Thu Phương', 'Phạm Minh Toàn', 'Đỗ Xuân Hợp', 'Trần Kim Ngân', 'Vũ Đức Thắng'];
-            const types = ['Chuyển khoản', 'Rút tiền ATM', 'Thanh toán hóa đơn', 'Nhận tiền', 'Thanh toán thẻ tín dụng'];
-            const statuses = ['Thành công', 'Thất bại', 'Đang chờ'];
-            const amounts = [100000, 500000, 1000000, 2500000, 5000000, 10000000, 50000000];
+        <!-- GAME SCREEN -->
+        <div id="game-screen" class="hidden flex-1 relative flex flex-col md:flex-row bg-slate-200">
             
-            for (let i = 1; i <= count; i++) {
-                const id = `TXN${String(1000 + i).padStart(4, '0')}`;
-                // Tạo thời gian trong 30 ngày gần nhất
-                const date = new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000 - Math.floor(Math.random() * 24 * 60 * 60 * 1000));
-                const time = `${date.toISOString().slice(0, 10)} ${date.toTimeString().slice(0, 5)}`;
-                
-                // Sử dụng tổng số khách hàng là 1000
-                const sender = Math.random() < 0.8 ? `KH${String(Math.floor(Math.random() * 1000) + 1).padStart(5, '0')}` : names[Math.floor(Math.random() * names.length)];
-                const recipient = Math.random() < 0.8 ? `KH${String(Math.floor(Math.random() * 1000) + 1).padStart(5, '0')}` : 'Ngân hàng khác';
-                
-                const amountValue = amounts[Math.floor(Math.random() * amounts.length)];
-                const type = types[Math.floor(Math.random() * types.length)];
-                const isDebit = ['Chuyển khoản', 'Rút tiền ATM', 'Thanh toán hóa đơn', 'Thanh toán thẻ tín dụng'].includes(type);
-                // Format tiền tệ
-                const amount = `${isDebit ? '-' : '+'}${amountValue.toLocaleString('vi-VN')} VND`;
-                const status = statuses[Math.floor(Math.random() * statuses.length)];
-                
-                transactions.push({ id, time, sender, recipient, type, amount, status, isDebit });
-            }
-            // Sắp xếp theo thời gian mới nhất (DESC)
-            return transactions.sort((a, b) => new Date(b.time.replace(' ', 'T')) - new Date(a.time.replace(' ', 'T'))); 
+            <!-- Game Board Area -->
+            <div class="flex-1 flex items-center justify-center p-2 relative overflow-auto">
+                <canvas id="gameCanvas" width="600" height="600" class="shadow-2xl rounded-lg bg-white max-w-full h-auto" style="max-height: 80vh; aspect-ratio: 1/1;"></canvas>
+            </div>
+
+            <!-- Controls & Stats Area -->
+            <div class="w-full md:w-80 bg-white border-l border-gray-200 flex flex-col shadow-lg z-10">
+                <!-- Turn Indicator -->
+                <div class="p-4 border-b border-gray-200 text-center bg-gray-50">
+                    <h3 class="text-gray-500 text-sm uppercase tracking-wide">Lượt của</h3>
+                    <div id="turn-indicator" class="text-2xl font-bold mt-1 text-gray-800 flex items-center justify-center gap-2">
+                        <span>---</span>
+                    </div>
+                </div>
+
+                <!-- Dice Section -->
+                <div class="flex-1 flex flex-col items-center justify-center p-6 space-y-6">
+                    <div id="dice-container" class="w-24 h-24 bg-white border-4 border-gray-300 rounded-2xl flex items-center justify-center text-4xl font-bold shadow-inner cursor-pointer hover:scale-105 transition transform active:scale-95" onclick="rollDice()">
+                        🎲
+                    </div>
+                    <button id="roll-btn" onclick="rollDice()" class="px-8 py-3 bg-indigo-600 text-white rounded-full font-bold shadow-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        Gieo Xúc Xắc
+                    </button>
+                    <p id="game-message" class="text-center text-gray-600 px-4 min-h-[3rem]">
+                        Đang chờ người chơi...
+                    </p>
+                </div>
+
+                <!-- Player List -->
+                <div class="p-4 bg-gray-50 border-t border-gray-200">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-3">Người chơi trong phòng</h4>
+                    <div id="player-list" class="space-y-2">
+                        <!-- Player items injected here -->
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                         <button onclick="resetGame()" class="w-full py-2 text-xs text-red-600 hover:bg-red-50 rounded border border-red-200">
+                            🔄 Chơi lại ván mới
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- CONFIGURATION ---
+        const firebaseConfig = JSON.parse(localStorage.getItem('firebaseConfig') || '{}');
+        // Environment handling (for the AI platform execution)
+        const activeConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
+        const activeAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-ludo-app';
+        
+        const app = initializeApp(activeConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- GLOBAL STATE ---
+        let currentUser = null;
+        let currentRoom = null;
+        let myColor = null;
+        let myName = "";
+        let unsubscribeRoom = null;
+        let gameState = null;
+        
+        // Game Constants
+        const COLORS = ['red', 'green', 'yellow', 'blue'];
+        const PATH_LENGTH = 52; // Main track length
+        const HOME_run_LENGTH = 6;
+        
+        // Canvas Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const TILE_SIZE = 40; // Base unit for drawing grid (15x15)
+
+        // --- AUTHENTICATION ---
+        async function initAuth() {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                 // N/A for this simple flow usually, but good practice
+            } 
+            await signInAnonymously(auth);
         }
 
-        // TẠO TỔNG CỘNG 1000 GIAO DỊCH
-        const MOCK_TRANSACTIONS = generateMockTransactions(1000);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                console.log("Logged in:", user.uid);
+            }
+        });
+        
+        initAuth();
 
-        // Định nghĩa cấu trúc nội dung cho từng trang (mô phỏng)
-        const pages = {
-            tong_quan: {
-                title: "Tổng Quan",
-                getContent: () => `
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        ${createStatCard('Tổng Số Khách Hàng', MOCK_CUSTOMERS.length.toLocaleString('vi-VN')+'+', 'users', 'blue', '+5.2% so với tháng trước')}
-                        ${createStatCard('Dư Nợ Cho Vay', '3,4 Tỉ USD', 'hand-coins', 'green', 'Tăng 8.1%')}
-                        ${createStatCard('Giao Dịch Hôm Nay', '4,870', 'arrow-left-right', 'orange', '35 Giao dịch bất thường')}
-                        ${createStatCard('Tài Sản Ròng', '850 Triệu USD', 'piggy-bank', 'teal', 'Đã đạt mục tiêu 90%')}
-                    </div>
+        // --- UI LOGIC ---
+        window.selectColor = (color) => {
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-blue-300'));
+            const btn = document.querySelector(`.color-btn[data-color="${color}"]`);
+            if (btn) btn.classList.add('ring-4', 'ring-blue-300');
+            
+            myColor = color;
+            document.getElementById('color-status').innerText = `Đã chọn: ${getColorName(color)}`;
+            document.getElementById('color-status').style.color = color;
+            checkJoinReady();
+        };
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Biểu đồ Dòng Tiền & Lợi Nhuận (Sử dụng Chart.js) -->
-                        <div class="lg:col-span-2 bg-white p-6 card-shadow rounded-lg">
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Biểu Đồ Dòng Tiền & Lợi Nhuận (6 Tháng)</h2>
-                            <!-- Canvas để vẽ biểu đồ. Height: 256px (h-64) -->
-                            <div class="h-64">
-                                <canvas id="revenueChart"></canvas>
-                            </div>
-                            <p class="text-sm text-gray-500 mt-4">Dữ liệu giả lập, cập nhật theo thời gian thực.</p>
-                        </div>
+        function checkJoinReady() {
+            const name = document.getElementById('name-input').value.trim();
+            const room = document.getElementById('room-input').value.trim();
+            const btn = document.getElementById('join-btn');
+            btn.disabled = !(name && room && myColor);
+        }
+        
+        document.getElementById('name-input').addEventListener('input', checkJoinReady);
+        document.getElementById('room-input').addEventListener('input', checkJoinReady);
 
-                        <!-- Danh sách các giao dịch gần đây -->
-                        <div class="bg-white p-6 card-shadow rounded-lg">
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Giao Dịch Gần Đây</h2>
-                            <ul class="space-y-4 text-sm">
-                                ${createTransactionItem('Nguyễn Thị Bình', 'Chuyển khoản', '-$5,200', 'red')}
-                                ${createTransactionItem('Công Ty TNHH Mai Trang', 'Nhận tiền thanh toán', '+$15,000', 'green')}
-                                ${createTransactionItem('Trần Văn Đức', 'Rút tiền ATM', '-$500', 'red')}
-                                ${createTransactionItem('Nguyễn Hoàng Yến', 'Thanh toán hóa đơn', '-$150', 'red')}
-                                ${createTransactionItem('Trần Bình Lưu', 'Gửi tiền', '+$50,000', 'green')}
-                            </ul>
-                            <a href="#" class="mt-4 block text-blue-600 hover:text-blue-700 font-medium text-sm">Xem tất cả giao dịch &rarr;</a>
-                        </div>
-                    </div>
-                `
-            },
-            quan_ly_khach_hang: {
-                title: "Quản Lý Khách Hàng",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow rounded-lg">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
-                            <h2 class="text-xl font-semibold text-gray-800">Danh Sách Khách Hàng</h2>
-                            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                                <!-- Ô Tìm Kiếm theo ID Khách hàng hoặc Số Tài Khoản -->
-                                <div class="relative w-full sm:w-96">
-                                    <input type="text" id="customerSearch" placeholder="Tìm kiếm theo ID hoặc Số Tài Khoản" 
-                                           class="py-2 pl-10 pr-4 w-full border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition" 
-                                           oninput="handleCustomerSearch(this.value)">
-                                    <i lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                </div>
-                                
-                                <!-- Nút "Thêm Khách Hàng Mới" đã được vô hiệu hóa -->
-                                <button class="bg-gray-400 text-gray-700 px-4 py-2 text-sm font-medium transition flex items-center justify-center rounded-lg sm:w-auto cursor-not-allowed" disabled>
-                                    <i lucide="plus" class="mr-1 w-4 h-4"></i> Thêm Khách Hàng Mới (Bảo trì)
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Bảng Dữ Liệu -->
-                        <div class="overflow-x-auto custom-scrollbar relative">
-                            <div id="loadingOverlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-10 hidden transition-opacity duration-300">
-                                <div class="flex flex-col items-center">
-                                    <div class="spinner w-8 h-8 border-4 border-gray-200 rounded-full mb-3"></div>
-                                    <p class="text-blue-600 font-medium">Đang tìm kiếm khách hàng...</p>
-                                </div>
-                            </div>
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        ${createTableHeader('Tên Khách Hàng')}
-                                        ${createTableHeader('ID Khách Hàng')}
-                                        ${createTableHeader('Số Tài Khoản')}
-                                        ${createTableHeader('Loại Tài Khoản')}
-                                        ${createTableHeader('Số Dư')}
-                                        ${createTableHeader('Trạng Thái')}
-                                        ${createTableHeader('Sinh trắc học')}
-                                        ${createTableHeader('Hành Động')}
-                                    </tr>
-                                </thead>
-                                <tbody id="customerTableBody" class="bg-white divide-y divide-gray-200 text-sm">
-                                    <!-- Dữ liệu sẽ được render bằng JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
+        function getColorName(c) {
+            const map = { 'red': 'Đỏ', 'green': 'Xanh Lá', 'yellow': 'Vàng', 'blue': 'Xanh Dương' };
+            return map[c] || c;
+        }
 
-                        <!-- Phân Trang (Pagination) -->
-                        <div id="customerPagination" class="mt-4 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600 space-y-4 sm:space-y-0">
-                            <!-- Dữ liệu phân trang sẽ được render bằng JavaScript -->
-                        </div>
-                    </div>
-                `
-            },
-            giao_dich: {
-                title: "Quản Lý Giao Dịch",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Lọc và Tìm Kiếm Giao Dịch</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <input type="date" id="transactionDateFilter" class="p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                            <select id="transactionTypeFilter" class="p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">Tất cả loại giao dịch</option>
-                                <option value="Chuyển khoản">Chuyển khoản</option>
-                                <option value="Rút tiền ATM">Rút tiền ATM</option>
-                                <option value="Thanh toán hóa đơn">Thanh toán hóa đơn</option>
-                                <option value="Nhận tiền">Nhận tiền</option>
-                                <option value="Thanh toán thẻ tín dụng">Thanh toán thẻ tín dụng</option>
-                            </select>
-                            <select id="transactionStatusFilter" class="p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="Thành công">Thành công</option>
-                                <option value="Thất bại">Thất bại</option>
-                                <option value="Đang chờ">Đang chờ</option>
-                            </select>
-                            <button id="applyFilterBtn" onclick="applyTransactionFilters()" class="bg-blue-600 text-white px-4 py-2 text-sm font-medium hover:bg-blue-700 transition rounded-lg">Áp Dụng Lọc</button>
-                        </div>
-                        <h3 class="text-lg font-medium text-gray-700 mb-4">Bảng Giao Dịch Chi Tiết (${MOCK_TRANSACTIONS.length.toLocaleString('vi-VN')} Giao dịch gần nhất)</h3>
-                        <div class="overflow-x-auto custom-scrollbar relative">
-                            <!-- THÊM LOADING OVERLAY CHO BẢNG GIAO DỊCH -->
-                            <div id="transactionLoadingOverlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-10 hidden transition-opacity duration-300">
-                                <div class="flex flex-col items-center">
-                                    <div class="spinner w-8 h-8 border-4 border-gray-200 rounded-full mb-3"></div>
-                                    <p class="text-blue-600 font-medium">Đang xử lý dữ liệu giao dịch...</p>
-                                </div>
-                            </div>
-                            <!-- KẾT THÚC LOADING OVERLAY -->
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        ${createTableHeader('ID Giao Dịch')}
-                                        ${createTableHeader('Thời Gian')}
-                                        ${createTableHeader('Khách Hàng Gửi')}
-                                        ${createTableHeader('Khách Hàng Nhận')}
-                                        ${createTableHeader('Số Tiền')}
-                                        ${createTableHeader('Trạng Thái')}
-                                        ${createTableHeader('Chi Tiết')}
-                                    </tr>
-                                </thead>
-                                <tbody id="transactionTableBody" class="bg-white divide-y divide-gray-200 text-sm">
-                                    <!-- Dữ liệu 100 giao dịch sẽ được render bằng JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Phân Trang Giao Dịch -->
-                        <div id="transactionPagination" class="mt-4 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600 space-y-4 sm:space-y-0">
-                            <!-- Dữ liệu phân trang sẽ được render bằng JavaScript -->
-                        </div>
-                    </div>
-                `
-            },
-            quan_tri_tai_khoan: {
-                title: "Quản lý Tài khoản & Bảo mật (Bảo trì)",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow space-y-6 rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800">Thông Báo</h2>
-                        <p class="text-red-500 font-medium text-lg">Tính năng này đã bị vô hiệu hóa do hệ thống đang được bảo trì. Vui lòng thử lại sau.</p>
-                        <i lucide="x-circle" class="w-12 h-12 text-red-500 mx-auto block"></i>
-                    </div>
-                `
-            },
-            phan_quyen: {
-                title: "Phân quyền Chi nhánh (Bảo trì)",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow space-y-6 rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800">Thông Báo</h2>
-                        <p class="text-red-500 font-medium text-lg">Tính năng này đã bị vô hiệu hóa do hệ thống đang được bảo trì. Vui lòng thử lại sau.</p>
-                        <i lucide="x-circle" class="w-12 h-12 text-red-500 mx-auto block"></i>
-                    </div>
-                `
-            },
-            quan_ly_quang_cao: {
-                title: "Quản lý Quảng cáo (Bảo trì)",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow space-y-6 rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800">Thông Báo</h2>
-                        <p class="text-red-500 font-medium text-lg">Tính năng này đã bị vô hiệu hóa do hệ thống đang được bảo trì. Vui lòng thử lại sau.</p>
-                        <i lucide="x-circle" class="w-12 h-12 text-red-500 mx-auto block"></i>
-                    </div>
-                `
-            },
-            quan_ly_yeu_cau: {
-                title: "Quản lý Yêu cầu (Bảo trì)",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow space-y-6 rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800">Thông Báo</h2>
-                        <p class="text-red-500 font-medium text-lg">Tính năng này đã bị vô hiệu hóa do hệ thống đang được bảo trì. Vui lòng thử lại sau.</p>
-                        <i lucide="x-circle" class="w-12 h-12 text-red-500 mx-auto block"></i>
-                    </div>
-                `
-            },
-            bao_cao_thong_ke: {
-                title: "Báo cáo & Thống kê (Bảo trì)",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow space-y-6 rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800">Thông Báo</h2>
-                        <p class="text-red-500 font-medium text-lg">Tính năng này đã bị vô hiệu hóa do hệ thống đang được bảo trì. Vui lòng thử lại sau.</p>
-                        <i lucide="x-circle" class="w-12 h-12 text-red-500 mx-auto block"></i>
-                    </div>
-                `
-            },
-            cai_dat: {
-                title: "Cài Đặt Hệ Thống (Bảo trì)",
-                getContent: () => `
-                    <div class="bg-white p-6 card-shadow space-y-6 rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800">Thông Báo</h2>
-                        <p class="text-red-500 font-medium text-lg">Tính năng này đã bị vô hiệu hóa do hệ thống đang được bảo trì. Vui lòng thử lại sau.</p>
-                        <i lucide="x-circle" class="w-12 h-12 text-red-500 mx-auto block"></i>
-                    </div>
-                `
+        function getColorHex(c) {
+            const map = { 'red': '#ef4444', 'green': '#22c55e', 'yellow': '#eab308', 'blue': '#3b82f6' };
+            return map[c] || '#000';
+        }
+
+        // --- GAME LOGIC : JOINING ---
+        window.joinGame = async () => {
+            if (!currentUser) return;
+            
+            const roomID = document.getElementById('room-input').value.trim().toUpperCase();
+            myName = document.getElementById('name-input').value.trim();
+            currentRoom = roomID;
+
+            const roomRef = doc(db, 'artifacts', activeAppId, 'public', 'data', `room_${roomID}`);
+
+            try {
+                const docSnap = await getDoc(roomRef);
+                
+                if (!docSnap.exists()) {
+                    // Create new room
+                    await setDoc(roomRef, {
+                        players: { [myColor]: { name: myName, id: currentUser.uid } },
+                        turn: 'red', // Red goes first
+                        diceVal: 0,
+                        lastDiceRoller: null,
+                        pieces: createInitialPieces(),
+                        status: 'waiting',
+                        winner: null,
+                        log: [`Phòng ${roomID} được tạo bởi ${myName}`]
+                    });
+                } else {
+                    const data = docSnap.data();
+                    if (data.players[myColor]) {
+                        // Check if it's me reconnecting or someone else
+                        if (data.players[myColor].id !== currentUser.uid) {
+                            document.getElementById('lobby-msg').innerText = "Màu này đã có người chọn!";
+                            return;
+                        }
+                    } else {
+                        // Join existing
+                        await updateDoc(roomRef, {
+                            [`players.${myColor}`]: { name: myName, id: currentUser.uid }
+                        });
+                    }
+                }
+
+                document.getElementById('lobby-screen').classList.add('hidden');
+                document.getElementById('game-screen').classList.remove('hidden');
+                document.getElementById('game-screen').classList.add('flex');
+                document.getElementById('room-info').classList.remove('hidden');
+                document.getElementById('display-room-id').innerText = roomID;
+
+                startGameListener(roomRef);
+
+            } catch (error) {
+                console.error("Error joining:", error);
+                document.getElementById('lobby-msg').innerText = "Lỗi kết nối. Thử lại sau.";
             }
         };
 
-        // --- Hàm tạo UI components (giúp code HTML gọn gàng hơn) ---
-
-        /** Tạo thẻ thống kê (Stat Card) */
-        function createStatCard(title, value, icon, color, footer) {
-            const colorMap = {
-                blue: { bg: 'bg-blue-500', text: 'text-blue-500', iconBg: 'bg-blue-100', border: 'border-blue-500' },
-                green: { bg: 'bg-green-500', text: 'text-green-500', iconBg: 'bg-green-100', border: 'border-green-500' },
-                orange: { bg: 'bg-orange-500', text: 'text-orange-500', iconBg: 'bg-orange-100', border: 'border-orange-500' },
-                teal: { bg: 'bg-teal-500', text: 'text-teal-500', iconBg: 'bg-teal-100', border: 'border-teal-500' }
+        function createInitialPieces() {
+            // 4 pieces per color. State: -1 (home), 0-51 (track), 100-105 (finished/ladder)
+            // Simplified: position is absolute on the track.
+            // But Ludo is complex. We'll use a specific notation.
+            // -1: In Base (Chuồng)
+            // 0-51: Main Track (Standardized indices)
+            // 100+: Finishing steps (100 = start of ladder, 105 = goal)
+            return {
+                red: [-1, -1, -1, -1],
+                green: [-1, -1, -1, -1],
+                yellow: [-1, -1, -1, -1],
+                blue: [-1, -1, -1, -1]
             };
-            const c = colorMap[color] || colorMap.blue;
-
-            return `
-                <div class="bg-white p-6 card-shadow border-l-4 ${c.border} rounded-lg">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-sm font-medium text-gray-500">${title}</h3>
-                        <div class="p-2 ${c.iconBg} ${c.text} rounded-full">
-                            <i lucide="${icon}"></i>
-                        </div>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900">${value}</p>
-                    <p class="text-xs mt-2 text-gray-500">${footer}</p>
-                </div>
-            `;
         }
 
-        /** Tạo mục giao dịch gần đây (dùng cho trang Tổng Quan) */
-        function createTransactionItem(name, type, amount, color) {
-            const amountClass = color === 'red' ? 'text-red-600' : 'text-green-600';
-            const icon = color === 'red' ? 'arrow-up-right' : 'arrow-down-left';
-
-            return `
-                <li class="flex justify-between items-center py-2 border-b last:border-b-0">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-gray-100 mr-3 text-gray-600 rounded-full">
-                            <i lucide="${icon}" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800">${name}</p>
-                            <p class="text-xs text-gray-500">${type}</p>
-                        </div>
-                    </div>
-                    <span class="${amountClass} font-semibold">${amount}</span>
-                </li>
-            `;
+        // --- GAME LOGIC : SYNC & LISTEN ---
+        function startGameListener(roomRef) {
+            unsubscribeRoom = onSnapshot(roomRef, (doc) => {
+                if (doc.exists()) {
+                    gameState = doc.data();
+                    renderUI();
+                    drawBoard();
+                }
+            }, (error) => {
+                console.error("Sync error:", error);
+            });
         }
 
-        /** Tạo ô tiêu đề bảng */
-        function createTableHeader(title) {
-            return `<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${title}</th>`;
-        }
+        // --- GAMEPLAY ACTIONS ---
+        window.rollDice = async () => {
+            if (!canAct()) return;
+            if (gameState.diceVal !== 0 && gameState.lastDiceRoller === myColor) return; // Already rolled, must move
 
-        /** Tạo dòng khách hàng (Đã cập nhật cột Số Tài Khoản) */
-        function createCustomerRow(customer) {
-            const { name, id, accountNumber, type, balance, status, biometrics } = customer;
+            const val = Math.floor(Math.random() * 6) + 1;
             
-            // Xử lý màu sắc cho cột Trạng Thái (Status)
-            const statusColor = (status === 'Hoạt động' || status === 'Đã bút toán') ? 'bg-green-100 text-green-800' : (status === 'Tạm khóa' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800');
+            // Logic: update dice in DB
+            const roomRef = doc(db, 'artifacts', activeAppId, 'public', 'data', `room_${currentRoom}`);
             
-            // Xử lý màu sắc cho cột Sinh Trắc Học (Biometrics)
-            const isVerified = biometrics === 'Đã xác minh' || biometrics === 'Đã xác minh. Cập nhật vào lúc 01/12/2025 10:08:32';
-            const isVerifing = biometrics === 'Đang cập nhật';
-            const bioColor = isVerified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-            //bioColor = isVerifing ? 'bg-green-100 text-yellow-800';
-            return `
-                <tr class="customer-row" data-customer-id="${id}">
-                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 font-mono">${accountNumber}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${type}</td>
-                    <td class="px-6 py-4 whitespace-nowrap font-semibold">${balance}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold ${statusColor} rounded-full">${status}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold ${bioColor} rounded-full">${biometrics}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button class="text-blue-600 hover:text-blue-800 mr-3">Xem</button>
-                        <button class="text-red-600 hover:text-red-800">Xóa</button>
-                    </td>
-                </tr>
-            `;
+            // Simple logic: Save roll. If no moves possible, logic handles next turn automatically or waits user ack.
+            // Here we just save the roll.
+            await updateDoc(roomRef, {
+                diceVal: val,
+                lastDiceRoller: myColor,
+                log: arrayUnion(`${myName} (${getColorName(myColor)}) tung được ${val}`)
+            });
+
+            // Check auto-skip if no moves possible (simplified)
+            // Ideally we wait for update, then calc valid moves locally.
+        };
+
+        window.resetGame = async () => {
+            if (!confirm("Bạn có chắc muốn reset ván đấu không?")) return;
+            const roomRef = doc(db, 'artifacts', activeAppId, 'public', 'data', `room_${currentRoom}`);
+            await updateDoc(roomRef, {
+                diceVal: 0,
+                lastDiceRoller: null,
+                pieces: createInitialPieces(),
+                turn: 'red',
+                winner: null,
+                log: arrayUnion(`Ván đấu đã được reset.`)
+            });
+        };
+
+        function canAct() {
+            return gameState && gameState.turn === myColor && gameState.players[myColor]?.id === currentUser.uid;
         }
+
+        // --- CORE GAME ENGINE ---
         
-        /** Tạo dòng giao dịch */
-        function createTransactionRow(txn) {
-            const { id, time, sender, recipient, amount, status, isDebit } = txn;
-            
-            let statusClass;
-            switch (status) {
-                case 'Thành công':
-                    statusClass = 'bg-green-100 text-green-800';
-                    break;
-                case 'Thất bại':
-                    statusClass = 'bg-red-100 text-red-800';
-                    break;
-                case 'Đang chờ':
-                default:
-                    statusClass = 'bg-yellow-100 text-yellow-800';
-                    break;
+        // Track offsets for each color on the 52-tile loop
+        const START_OFFSETS = { red: 0, green: 13, yellow: 26, blue: 39 };
+
+        async function handlePieceClick(color, pieceIdx) {
+            if (!canAct()) return;
+            if (color !== myColor) return;
+            if (gameState.diceVal === 0) {
+                alert("Hãy tung xúc xắc trước!");
+                return;
             }
+
+            const currentPos = gameState.pieces[color][pieceIdx];
+            const dice = gameState.diceVal;
+            let newPos = currentPos;
+            let moveType = ''; // 'out', 'move', 'finish'
+
+            // 1. Move out of base (Xuất chuồng)
+            if (currentPos === -1) {
+                if (dice === 6) {
+                    newPos = 0; // Relative track position 0
+                    moveType = 'out';
+                } else {
+                    return; // Cannot move this piece
+                }
+            } 
+            // 2. Already in finishing ladder (Về đích)
+            else if (currentPos >= 100) {
+                const ladderStep = currentPos - 100;
+                // Simplified ladder: exact roll or step up
+                if (ladderStep + dice <= 6) {
+                     newPos = currentPos + dice;
+                     moveType = 'ladder';
+                } else {
+                    return; // Overshoot
+                }
+            }
+            // 3. On Main Track
+            else {
+                // Calculate raw steps
+                const nextStep = currentPos + dice;
+                
+                // Check if entering ladder
+                // Path length is 51 (0-50). Entering ladder happens after completing a lap.
+                // Since we store relative pos 0-50, we need to handle wrapping manually or use absolute coords.
+                // Let's use Relative Logic:
+                // A piece moves from 0 to 50 relative to its start. 
+                // Wait, easier model: Store 0-50 as "steps taken".
+                // Let's refactor `currentPos` to mean "steps taken from start".
+                // 0 = Start tile. 50 = Last tile before ladder. 51 = Ladder 1...
+                
+                // REFACTORING LOGIC for Robustness:
+                // stored value 0-50: on track.
+                // stored value -1: in base.
+                // stored value 51-56: on ladder (1-6).
+                
+                if (currentPos + dice <= 56) {
+                    newPos = currentPos + dice;
+                    moveType = 'move';
+                } else {
+                    return; // Cannot move
+                }
+            }
+
+            // Perform Move & Kick Logic
+            const roomRef = doc(db, 'artifacts', activeAppId, 'public', 'data', `room_${currentRoom}`);
+            const newPieces = JSON.parse(JSON.stringify(gameState.pieces));
             
-            const amountClass = isDebit ? 'text-red-600' : 'text-green-600';
-
-            return `
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${time}</td>
-                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-700">${sender}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-700">${recipient}</td>
-                    <td class="px-6 py-4 whitespace-nowrap font-semibold ${amountClass}">${amount}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold ${statusClass} rounded-full">${status}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap"><button class="text-blue-600 hover:text-blue-800">Xem</button></td>
-                </tr>
-            `;
-        }
-
-        
-        // --- Logic khởi tạo biểu đồ Chart.js ---
-        let revenueChartInstance = null;
-        /** * Khởi tạo biểu đồ Chart.js cho trang Tổng Quan. */
-        function initializeChart(pageKey) {
-            if (pageKey === 'tong_quan') {
-                const ctx = document.getElementById('revenueChart');
-                if (ctx) {
-                    if (revenueChartInstance) {
-                        revenueChartInstance.destroy(); // Hủy bỏ instance cũ nếu có
-                    }
-
-                    revenueChartInstance = new Chart(ctx, {
-                        type: 'line', // Loại biểu đồ chính (Dòng Tiền)
-                        data: {
-                            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
-                            datasets: [
-                                {
-                                    type: 'bar', // Biểu đồ cột (Lợi Nhuận)
-                                    label: 'Lợi Nhuận Gộp (Triệu USD)',
-                                    data: [55, 60, 75, 80, 70, 95], // Dữ liệu giả lập
-                                    backgroundColor: 'rgba(59, 130, 246, 0.8)', // Màu xanh dương
-                                    borderColor: 'rgba(59, 130, 246, 1)',
-                                    borderWidth: 1,
-                                    borderRadius: 4,
-                                },
-                                {
-                                    type: 'line', // Biểu đồ đường (Dòng Tiền)
-                                    label: 'Dòng Tiền Thuần (Triệu USD)',
-                                    data: [65, 80, 70, 90, 85, 110], // Dữ liệu giả lập
-                                    fill: false,
-                                    borderColor: 'rgb(16, 185, 129)', // Màu xanh lá
-                                    tension: 0.3, // Độ cong của đường
-                                    pointBackgroundColor: 'rgb(16, 185, 129)',
-                                    pointRadius: 5
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false, // Quan trọng để canvas fill container
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                    labels: {
-                                        font: {
-                                            family: 'Inter'
-                                        }
-                                    }
-                                },
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Giá trị (Triệu USD)',
-                                        font: {
-                                            family: 'Inter',
-                                            weight: 'bold'
-                                        }
-                                    }
-                                }
+            // Check Kick (Đá)
+            // Convert relative newPos to Absolute Board Index (0-51) to check collisions
+            let didKick = false;
+            let kickMsg = "";
+            
+            if (newPos <= 50) {
+                const myAbsPos = (newPos + START_OFFSETS[myColor]) % 52;
+                
+                // Check enemies
+                for (let c of COLORS) {
+                    if (c === myColor) continue;
+                    newPieces[c].forEach((pPos, idx) => {
+                        if (pPos !== -1 && pPos <= 50) {
+                            const enemyAbs = (pPos + START_OFFSETS[c]) % 52;
+                            if (enemyAbs === myAbsPos) {
+                                // KICK!
+                                newPieces[c][idx] = -1; // Send home
+                                didKick = true;
+                                kickMsg = ` và đá quân ${getColorName(c)}!`;
                             }
                         }
                     });
                 }
             }
-        }
-        
-        // --- Logic Xử lý Bảng Khách Hàng và Phân Trang/Tìm kiếm (Sử dụng Ellipsis Pagination) ---
 
-        /** Render bảng khách hàng dựa trên dữ liệu đã lọc/phân trang */
-        function renderCustomerTable(customers, page = 1) {
-            const tableBody = document.getElementById('customerTableBody');
-            const paginationDiv = document.getElementById('customerPagination');
-            
-            if (!tableBody || !paginationDiv) return;
+            newPieces[color][pieceIdx] = newPos;
 
-            // Ẩn hiệu ứng loading
-            document.getElementById('loadingOverlay').classList.add('hidden');
-
-            // 1. Lọc và phân trang dữ liệu
-            const totalRows = customers.length;
-            const totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
-            
-            const start = (page - 1) * ROWS_PER_PAGE;
-            const end = start + ROWS_PER_PAGE;
-            const paginatedCustomers = customers.slice(start, end);
-
-            // 2. Render hàng (rows)
-            if (paginatedCustomers.length === 0) {
-                 tableBody.innerHTML = `<tr><td colspan="8" class="px-6 py-10 text-center text-gray-500 text-lg">Không tìm thấy khách hàng nào phù hợp với điều kiện tìm kiếm.</td></tr>`;
-            } else {
-                 tableBody.innerHTML = paginatedCustomers.map(createCustomerRow).join('');
+            // Determine Next Turn
+            // Rule: Roll 6 gets another turn. Otherwise next player.
+            let nextTurn = gameState.turn;
+            if (gameState.diceVal !== 6) {
+                const currentIndex = COLORS.indexOf(gameState.turn);
+                nextTurn = COLORS[(currentIndex + 1) % 4];
             }
 
-            // 3. Render phân trang (Logic Ellipsis)
-            let paginationHtml = '';
-            
-            // Thông báo hiển thị
-            const displayedCount = Math.min(end, totalRows) - start;
-            paginationHtml += `
-                <span>Hiển thị ${start + 1} đến ${start + displayedCount} của ${totalRows} Khách hàng (Tổng cộng ${MOCK_CUSTOMERS.length.toLocaleString('vi-VN')} trong hệ thống)</span>
+            await updateDoc(roomRef, {
+                pieces: newPieces,
+                turn: nextTurn,
+                diceVal: 0,
+                lastDiceRoller: null,
+                log: arrayUnion(`${myName} đi quân ${pieceIdx + 1}${kickMsg}`)
+            });
+        }
+
+        // --- DRAWING & VISUALS ---
+
+        function renderUI() {
+            // Update Player List
+            const list = document.getElementById('player-list');
+            list.innerHTML = '';
+            COLORS.forEach(c => {
+                const p = gameState.players[c];
+                const isActive = gameState.turn === c;
+                const isMe = p?.id === currentUser?.uid;
+                
+                if (p) {
+                    list.innerHTML += `
+                        <div class="flex items-center justify-between p-2 rounded ${isActive ? 'bg-blue-100 border border-blue-300' : 'bg-white'}">
+                            <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 rounded-full" style="background:${getColorHex(c)}"></div>
+                                <span class="font-bold text-sm ${isMe ? 'text-blue-700' : 'text-gray-700'}">${p.name} ${isMe ? '(Bạn)' : ''}</span>
+                            </div>
+                            ${isActive ? '🎲' : ''}
+                        </div>
+                    `;
+                } else {
+                    list.innerHTML += `
+                        <div class="flex items-center p-2 opacity-50">
+                            <div class="w-4 h-4 rounded-full border border-gray-400"></div>
+                            <span class="text-sm italic ml-2 text-gray-400">Trống (${getColorName(c)})</span>
+                        </div>
+                    `;
+                }
+            });
+
+            // Update Turn Info
+            const turnColor = gameState.turn;
+            const turnName = gameState.players[turnColor]?.name || getColorName(turnColor);
+            document.getElementById('turn-indicator').innerHTML = `
+                <div class="w-6 h-6 rounded-full border-2 border-white shadow-sm" style="background:${getColorHex(turnColor)}"></div>
+                <span>${turnName}</span>
             `;
 
-            // Nút phân trang
-            paginationHtml += `<div class="space-x-1 flex flex-wrap justify-center sm:justify-end">`;
+            // Update Dice UI
+            const diceEl = document.getElementById('dice-container');
+            const rollBtn = document.getElementById('roll-btn');
             
-            // Nút "Trước"
-            paginationHtml += `<button onclick="goToCustomerPage(${page - 1})" class="px-3 py-1 border hover:bg-gray-100 rounded-lg ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${page === 1 ? 'disabled' : ''}>Trước</button>`;
-            
-            // Logic Ellipsis
-            const siblingCount = 1; // Số trang quanh trang hiện tại (P-1, P, P+1)
-            const ellipsis = `<span class="px-3 py-1 text-gray-500">...</span>`;
-
-            let pagesArray = [];
-
-            // Thu thập các trang cần hiển thị: 1, ... [P-1, P, P+1], ... N
-            const pagesToShow = new Set();
-            
-            // Trang đầu tiên
-            pagesToShow.add(1);
-            
-            // Các trang lân cận trang hiện tại
-            for (let i = page - siblingCount; i <= page + siblingCount; i++) {
-                if (i > 1 && i < totalPages) {
-                    pagesToShow.add(i);
-                }
-            }
-            
-            // Trang cuối cùng
-            if (totalPages > 1) {
-                pagesToShow.add(totalPages);
-            }
-
-            // Thêm trang 2 và trang áp cuối để đảm bảo các dấu "..." được hiển thị chính xác
-            if (totalPages > 4) {
-                 pagesToShow.add(2);
-                 if (totalPages - 1 > 2) {
-                    pagesToShow.add(totalPages - 1);
-                 }
-            }
-
-            pagesArray = Array.from(pagesToShow).sort((a, b) => a - b);
-            
-            let lastPage = 0;
-            pagesArray.forEach(p => {
-                // Kiểm tra và thêm dấu "..."
-                if (lastPage !== 0 && p > lastPage + 1) {
-                    paginationHtml += ellipsis;
-                }
-
-                const activeClass = p === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-100';
-                paginationHtml += `<button onclick="goToCustomerPage(${p})" class="px-3 py-1 border ${activeClass} rounded-lg">${p}</button>`;
-                
-                lastPage = p;
-            });
-
-            // Nút "Tiếp"
-            paginationHtml += `<button onclick="goToCustomerPage(${page + 1})" class="px-3 py-1 border hover:bg-gray-100 rounded-lg ${page >= totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${page >= totalPages ? 'disabled' : ''}>Tiếp</button>`;
-            
-            paginationHtml += `</div>`;
-            
-            paginationDiv.innerHTML = paginationHtml;
-            
-            currentPage = page;
-        }
-
-        /** Chuyển trang Khách hàng (dùng cho nút Trước/Tiếp/Số trang) */
-        window.goToCustomerPage = function(page) {
-            const searchValue = document.getElementById('customerSearch')?.value || '';
-            const lowerSearchValue = searchValue.toLowerCase();
-
-            const filteredData = MOCK_CUSTOMERS.filter(c => 
-                c.id.toLowerCase().includes(lowerSearchValue) || 
-                c.accountNumber.toLowerCase().includes(lowerSearchValue)
-            );
-
-            const totalPages = Math.ceil(filteredData.length / ROWS_PER_PAGE);
-            if (page >= 1 && page <= totalPages) {
-                // Không cần loading spinner khi chuyển trang, chỉ cần khi gõ tìm kiếm
-                renderCustomerTable(filteredData, page);
-            }
-        }
-        
-        /** * Lọc khách hàng theo ID hoặc Số Tài Khoản (sự kiện oninput) 
-         * Áp dụng debounce và loading giả lập.
-         */
-        window.handleCustomerSearch = function(searchValue) {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            
-            // Xóa timeout cũ nếu người dùng vẫn đang gõ
-            if (searchTimeout) {
-                clearTimeout(searchTimeout);
-            }
-            
-            // Hiển thị loading spinner ngay lập tức
-            if (loadingOverlay) {
-                loadingOverlay.classList.remove('hidden');
-            }
-
-
-            // Thiết lập timeout mới (giả lập độ trễ xử lý dữ liệu lớn)
-            searchTimeout = setTimeout(() => {
-                const lowerSearchValue = searchValue.toLowerCase();
-
-                const filteredData = MOCK_CUSTOMERS.filter(c => 
-                    // Lọc theo ID hoặc Số Tài Khoản
-                    c.id.toLowerCase().includes(lowerSearchValue) || 
-                    c.accountNumber.toLowerCase().includes(lowerSearchValue)
-                );
-                
-                // Sau khi lọc, render lại bảng, hàm renderCustomerTable sẽ tự động ẩn loading
-                renderCustomerTable(filteredData, 1); 
-            }, 1500); // Giả lập độ trễ 1.5 giây
-        }
-
-        // --- Logic Xử lý Bảng Giao Dịch và Phân Trang/Lọc (ĐÃ CẬP NHẬT PHÂN TRANG ELLIPSIS) ---
-
-        /** Lọc và tìm kiếm giao dịch (ĐÃ CẬP NHẬT ĐỂ CÓ LOADING SPINNER) */
-        window.applyTransactionFilters = function() {
-            const dateInput = document.getElementById('transactionDateFilter');
-            const typeInput = document.getElementById('transactionTypeFilter');
-            const statusInput = document.getElementById('transactionStatusFilter');
-            const loadingOverlay = document.getElementById('transactionLoadingOverlay'); // Lấy overlay
-
-            if (!dateInput || !typeInput || !statusInput || !loadingOverlay) return; 
-            
-            // 1. Hiển thị loading spinner ngay lập tức
-            loadingOverlay.classList.remove('hidden');
-
-            const dateValue = dateInput.value;
-            const typeValue = typeInput.value;
-            const statusValue = statusInput.value;
-
-            // 2. Thiết lập độ trễ giả lập 1.5 giây
-            setTimeout(() => { 
-                
-                let filteredData = MOCK_TRANSACTIONS.filter(txn => {
-                    let matches = true;
-
-                    // Lọc theo Ngày (Dạng YYYY-MM-DD)
-                    if (dateValue) {
-                        const txnDate = txn.time.split(' ')[0];
-                        if (txnDate !== dateValue) {
-                            matches = false;
-                        }
-                    }
-
-                    // Lọc theo Loại Giao Dịch
-                    if (matches && typeValue && typeValue !== "") {
-                        if (txn.type !== typeValue) {
-                            matches = false;
-                        }
-                    }
-
-                    // Lọc theo Trạng Thái
-                    if (matches && statusValue && statusValue !== "") {
-                        if (txn.status !== statusValue) {
-                            matches = false;
-                        }
-                    }
-
-                    return matches;
-                });
-
-                // Cập nhật dữ liệu đã lọc và render lại trang 1
-                currentFilteredTransactions = filteredData;
-                // Hàm renderTransactionTable sẽ tự động ẩn loading sau khi render
-                renderTransactionTable(currentFilteredTransactions, 1);
-            }, 1500); // 1.5 giây giả lập
-        }
-
-        /** Render bảng giao dịch dựa trên dữ liệu đã lọc/phân trang */
-        function renderTransactionTable(transactions, page = 1) {
-            const tableBody = document.getElementById('transactionTableBody');
-            const paginationDiv = document.getElementById('transactionPagination');
-            const loadingOverlay = document.getElementById('transactionLoadingOverlay'); // Lấy overlay
-
-            if (!tableBody || !paginationDiv) return;
-
-            // 3. Ẩn hiệu ứng loading
-            if (loadingOverlay) { 
-                loadingOverlay.classList.add('hidden');
-            }
-
-            // 1. Phân trang dữ liệu
-            const totalRows = transactions.length;
-            const totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
-            
-            const start = (page - 1) * ROWS_PER_PAGE;
-            const end = start + ROWS_PER_PAGE;
-            const paginatedTransactions = transactions.slice(start, end);
-
-            // 2. Render hàng (rows)
-            if (paginatedTransactions.length === 0) {
-                 tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500 text-lg">Không tìm thấy giao dịch nào phù hợp với điều kiện lọc.</td></tr>`;
+            if (gameState.diceVal > 0) {
+                diceEl.innerText = gameState.diceVal;
+                diceEl.style.color = getColorHex(gameState.lastDiceRoller || 'black');
             } else {
-                 tableBody.innerHTML = paginatedTransactions.map(createTransactionRow).join('');
-            }
-           
-
-            // 3. Render phân trang (Logic Ellipsis)
-            let paginationHtml = '';
-            
-            const displayedCount = Math.min(end, totalRows) - start;
-            
-            // Cập nhật hiển thị tổng số giao dịch đã lọc
-            paginationHtml += `
-                <span>Hiển thị ${start + 1} đến ${start + displayedCount} của ${totalRows} Giao dịch (Tổng cộng ${MOCK_TRANSACTIONS.length.toLocaleString('vi-VN')} trong hệ thống)</span>
-            `;
-
-            // Nút phân trang
-            paginationHtml += `<div class="space-x-1 flex flex-wrap justify-center sm:justify-end">`;
-            
-            // Nút "Trước"
-            paginationHtml += `<button onclick="goToTransactionPage(${page - 1})" class="px-3 py-1 border hover:bg-gray-100 rounded-lg ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${page === 1 ? 'disabled' : ''}>Trước</button>`;
-            
-            // Logic Ellipsis (Đã sao chép từ renderCustomerTable)
-            const siblingCount = 1; 
-            const ellipsis = `<span class="px-3 py-1 text-gray-500">...</span>`;
-
-            let pagesArray = [];
-
-            const pagesToShow = new Set();
-            
-            pagesToShow.add(1);
-            
-            for (let i = page - siblingCount; i <= page + siblingCount; i++) {
-                if (i > 1 && i < totalPages) {
-                    pagesToShow.add(i);
-                }
-            }
-            
-            if (totalPages > 1) {
-                pagesToShow.add(totalPages);
+                diceEl.innerText = "🎲";
+                diceEl.style.color = "#ccc";
             }
 
-            if (totalPages > 4) {
-                 pagesToShow.add(2);
-                 if (totalPages - 1 > 2) {
-                    pagesToShow.add(totalPages - 1);
-                 }
+            // Button State
+            if (canAct() && gameState.diceVal === 0) {
+                rollBtn.disabled = false;
+                rollBtn.innerText = "Gieo Xúc Xắc";
+                rollBtn.classList.remove('bg-gray-400');
+                rollBtn.classList.add('bg-indigo-600');
+                document.getElementById('game-message').innerText = "Đến lượt bạn! Hãy gieo xúc xắc.";
+            } else if (canAct() && gameState.diceVal > 0) {
+                rollBtn.disabled = true;
+                rollBtn.innerText = "Chọn quân để đi";
+                rollBtn.classList.add('bg-gray-400');
+                document.getElementById('game-message').innerText = `Bạn tung được ${gameState.diceVal}. Hãy bấm vào quân cờ trên bàn để di chuyển.`;
+            } else {
+                rollBtn.disabled = true;
+                rollBtn.innerText = "Đợi người khác...";
+                rollBtn.classList.add('bg-gray-400');
+                document.getElementById('game-message').innerText = `Đang đợi ${turnName} hành động...`;
             }
-
-            pagesArray = Array.from(pagesToShow).sort((a, b) => a - b);
-            
-            let lastPage = 0;
-            pagesArray.forEach(p => {
-                if (lastPage !== 0 && p > lastPage + 1) {
-                    paginationHtml += ellipsis;
-                }
-
-                const activeClass = p === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-100';
-                paginationHtml += `<button onclick="goToTransactionPage(${p})" class="px-3 py-1 border ${activeClass} rounded-lg">${p}</button>`;
-                
-                lastPage = p;
-            });
-
-            // Nút "Tiếp"
-            paginationHtml += `<button onclick="goToTransactionPage(${page + 1})" class="px-3 py-1 border hover:bg-gray-100 rounded-lg ${page >= totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${page >= totalPages ? 'disabled' : ''}>Tiếp</button>`;
-            
-            paginationHtml += `</div>`;
-            
-            paginationDiv.innerHTML = paginationHtml;
         }
 
-        /** Chuyển trang Giao dịch (dùng cho nút Trước/Tiếp/Số trang) */
-        window.goToTransactionPage = function(page) {
-            // Sử dụng dữ liệu đã lọc (currentFilteredTransactions)
-            const totalPages = Math.ceil(currentFilteredTransactions.length / ROWS_PER_PAGE);
-            if (page >= 1 && page <= totalPages) {
-                renderTransactionTable(currentFilteredTransactions, page); // Pass the current filtered data
+        function drawBoard() {
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Ludo Board Grid
+            // Simple approach: Draw standard 15x15 grid pattern logic
+            // Cells are 40x40. Total 600x600.
+            
+            // Draw Bases (Corners)
+            drawBase(0, 0, 'red');       // Top-Left
+            drawBase(9, 0, 'green');     // Top-Right
+            drawBase(0, 9, 'blue');      // Bottom-Left
+            drawBase(9, 9, 'yellow');    // Bottom-Right
+            
+            // Draw Center
+            ctx.fillStyle = '#eee';
+            ctx.fillRect(6 * TILE_SIZE, 6 * TILE_SIZE, 3 * TILE_SIZE, 3 * TILE_SIZE);
+            // Draw Triangles in center
+            drawPoly([[6,6], [9,6], [7.5, 7.5]], getColorHex('green'));
+            drawPoly([[6,6], [6,9], [7.5, 7.5]], getColorHex('red'));
+            drawPoly([[9,9], [9,6], [7.5, 7.5]], getColorHex('yellow'));
+            drawPoly([[9,9], [6,9], [7.5, 7.5]], getColorHex('blue'));
+
+            // Draw Tracks
+            drawTrack();
+
+            // Draw Pieces
+            if (gameState && gameState.pieces) {
+                drawPieces();
             }
+        }
+
+        // Helper to map logic coordinate to Screen XY
+        // Standard Ludo Path is complex to code mathematically, so we map the "Visual Grid"
+        // 0-14 x 0-14
+        
+        function drawBase(gx, gy, color) {
+            ctx.fillStyle = getColorHex(color);
+            ctx.fillRect(gx * TILE_SIZE, gy * TILE_SIZE, 6 * TILE_SIZE, 6 * TILE_SIZE);
+            ctx.fillStyle = 'white';
+            ctx.fillRect((gx+1) * TILE_SIZE, (gy+1) * TILE_SIZE, 4 * TILE_SIZE, 4 * TILE_SIZE);
+        }
+
+        function drawPoly(points, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(points[0][0]*TILE_SIZE, points[0][1]*TILE_SIZE);
+            for(let i=1; i<points.length; i++) ctx.lineTo(points[i][0]*TILE_SIZE, points[i][1]*TILE_SIZE);
+            ctx.fill();
+        }
+
+        // Generate the visual coordinates of the 52 main steps
+        // This is a static map of the Ludo board walk path (Red start -> clockwise)
+        const TRACK_COORDS = [
+            // Red Path Start (near Red Base)
+            [1,6],[2,6],[3,6],[4,6],[5,6], // 0-4
+            [6,5],[6,4],[6,3],[6,2],[6,1],[6,0], // 5-10
+            [7,0],[8,0], // 11-12 (Top turn)
+            [8,1],[8,2],[8,3],[8,4],[8,5],[8,6], // 13-18 (Green side)
+            [9,6],[10,6],[11,6],[12,6],[13,6],[14,6], // 19-24
+            [14,7],[14,8], // 25-26 (Right turn)
+            [13,8],[12,8],[11,8],[10,8],[9,8],[8,8], // 27-32 (Yellow side)
+            [8,9],[8,10],[8,11],[8,12],[8,13],[8,14], // 33-38
+            [7,14],[6,14], // 39-40 (Bottom turn)
+            [6,13],[6,12],[6,11],[6,10],[6,9],[6,8], // 41-46 (Blue side)
+            [5,8],[4,8],[3,8],[2,8],[1,8], [0,8], // 47-52
+            [0,7] // 51 (Last step before overlap) -> Actually standard ludo has 52 squares on loop? 
+            // Standard: 15x15. 
+            // Arms are 6x3. Loop = (6*2 + 1) * 4 = 52. Correct.
+        ];
+        
+        // Manual override for simplicity:
+        // Let's draw the grid cells first so we see them.
+        function drawTrack() {
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+
+            // Draw all white cells on the cross
+            const crossCells = [];
+            // Horizontal bar
+            for(let x=0; x<15; x++) {
+                for(let y=6; y<=8; y++) crossCells.push([x,y]);
+            }
+            // Vertical bar
+            for(let y=0; y<15; y++) {
+                for(let x=6; x<=8; x++) crossCells.push([x,y]);
+            }
+
+            crossCells.forEach(([x,y]) => {
+                // Skip center
+                if (x>=6 && x<=8 && y>=6 && y<=8) return;
+                
+                ctx.fillStyle = 'white';
+                ctx.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                ctx.strokeRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            });
+            
+            // Color specific start points (optional, keeping it white for simple code)
+            // Draw Finish Ladders
+            drawLadder(1, 7, 'red', 'right');
+            drawLadder(7, 1, 'green', 'down');
+            drawLadder(13, 7, 'yellow', 'left');
+            drawLadder(7, 13, 'blue', 'up');
+        }
+
+        function drawLadder(sx, sy, color, dir) {
+            ctx.fillStyle = getColorHex(color);
+            for(let i=1; i<6; i++) {
+                let tx = sx, ty = sy;
+                if(dir==='right') tx += i;
+                if(dir==='left') tx -= i;
+                if(dir==='down') ty += i;
+                if(dir==='up') ty -= i;
+                ctx.fillRect(tx*TILE_SIZE, ty*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                ctx.strokeRect(tx*TILE_SIZE, ty*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+
+        function getCoord(color, steps) {
+            // 1. Base
+            if (steps === -1) {
+                // Hardcoded base slots
+                const map = {
+                    red: [[1.5,1.5], [1.5,3.5], [3.5,1.5], [3.5,3.5]],
+                    green: [[10.5,1.5], [10.5,3.5], [12.5,1.5], [12.5,3.5]],
+                    yellow: [[10.5,10.5], [10.5,12.5], [12.5,10.5], [12.5,12.5]],
+                    blue: [[1.5,10.5], [1.5,12.5], [3.5,10.5], [3.5,12.5]]
+                };
+                // We don't know which piece is which index here easily without passing it.
+                // We'll rely on the rendering loop to assign slots.
+                return [0,0]; // Placeholder
+            }
+            
+            // 2. Ladder (Steps 51-56)
+            if (steps > 50) {
+                const ladderIndex = steps - 51; // 0 to 5
+                // Red Ladder (y=7, x=1 to 6)
+                if (color === 'red') return [1 + ladderIndex, 7];
+                if (color === 'green') return [7, 1 + ladderIndex];
+                if (color === 'yellow') return [13 - ladderIndex, 7];
+                if (color === 'blue') return [7, 13 - ladderIndex];
+            }
+
+            // 3. Main Track (0-50)
+            // Adjust for color offset
+            const offset = START_OFFSETS[color];
+            const trackIdx = (steps + offset) % 52;
+            
+            // Map trackIdx to X,Y. 
+            // We need a proper map of 0-51 coordinates.
+            // Using the TRACK_COORDS array defined earlier?
+            // Wait, TRACK_COORDS above was just a sketch. Let's precise it.
+            // A simple lookup table is safest for Ludo.
+            
+            return getTrackCoord(trackIdx);
         }
         
-        // --- Logic điều hướng trang (SPA-like) ---
-        const sidebar = document.getElementById('sidebar');
-        const contentArea = document.getElementById('content-area');
-        const pageTitle = document.getElementById('page-title');
-        const sidebarItems = document.querySelectorAll('.sidebar-item');
-        const menuToggle = document.getElementById('menu-toggle');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        function getTrackCoord(index) {
+            const path = [
+                [1,6],[2,6],[3,6],[4,6],[5,6], [6,5],[6,4],[6,3],[6,2],[6,1],[6,0],
+                [7,0],[8,0], [8,1],[8,2],[8,3],[8,4],[8,5],[8,6], [9,6],[10,6],[11,6],[12,6],[13,6],[14,6],
+                [14,7],[14,8], [13,8],[12,8],[11,8],[10,8],[9,8],[8,8], [8,9],[8,10],[8,11],[8,12],[8,13],[8,14],
+                [7,14],[6,14], [6,13],[6,12],[6,11],[6,10],[6,9],[6,8], [5,8],[4,8],[3,8],[2,8],[1,8], [0,8], [0,7]
+            ];
+            return path[index] || [7,7];
+        }
 
-        /**
-         * Render nội dung cho trang được chọn
-         * @param {string} pageKey - Key của trang trong object pages
-         */
-        function renderPage(pageKey) {
-            const page = pages[pageKey];
-            if (page) {
-                // Cập nhật tiêu đề
-                pageTitle.textContent = page.title;
-                // Cập nhật nội dung (GỌI HÀM để nội dung được đánh giá)
-                contentArea.innerHTML = page.getContent(); 
-
-                // Cập nhật trạng thái active của sidebar
-                sidebarItems.forEach(item => {
-                    item.classList.remove('sidebar-item-active');
-                    // Chỉ active khi trang KHÔNG bị disabled
-                    if (item.getAttribute('data-page') === pageKey && !item.classList.contains('is-disabled')) {
-                        item.classList.add('sidebar-item-active');
+        function drawPieces() {
+            // Draw all pieces
+            COLORS.forEach(c => {
+                gameState.pieces[c].forEach((pos, idx) => {
+                    let cx, cy;
+                    
+                    if (pos === -1) {
+                        // Base positions
+                        const baseOffsets = [[1.5,1.5], [1.5,3.5], [3.5,1.5], [3.5,3.5]];
+                        let bx=0, by=0;
+                        if(c==='green') bx=9; if(c==='yellow') {bx=9; by=9;} if(c==='blue') by=9;
+                        cx = bx + baseOffsets[idx][0];
+                        cy = by + baseOffsets[idx][1];
+                    } else {
+                        const coord = getCoord(c, pos);
+                        cx = coord[0] + 0.5; // center it
+                        cy = coord[1] + 0.5;
                     }
+
+                    // Check for overlap to offset slightly? (Advanced)
+                    // For now, just draw on top.
+                    
+                    drawPiece(cx, cy, c, idx);
                 });
+            });
+        }
 
-                // Khởi tạo lại các icon Lucide cho nội dung mới
-                lucide.createIcons();
+        function drawPiece(gx, gy, color, index) {
+            const x = gx * TILE_SIZE;
+            const y = gy * TILE_SIZE;
+            const r = TILE_SIZE * 0.35;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = getColorHex(color);
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+            
+            // Highlight if moveable
+            if (gameState.turn === myColor && color === myColor && gameState.diceVal > 0 && currentUser && gameState.players[myColor].id === currentUser.uid) {
+                // Check if valid move logic technically allows it
+                // (Visual cue only)
+                ctx.strokeStyle = '#FFFF00';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+            
+            // Add click region
+            // Since canvas doesn't hold objects, we calc click in event listener
+        }
 
-                // *** Khởi tạo biểu đồ cho trang Tổng Quan ***
-                if (pageKey === 'tong_quan') {
-                    initializeChart(pageKey);
+        // --- INPUT HANDLING ---
+        canvas.addEventListener('click', (e) => {
+            if (!canAct() || gameState.diceVal === 0) return;
+
+            const rect = canvas.getBoundingClientRect();
+            // Scale logic for responsiveness
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            const clickX = (e.clientX - rect.left) * scaleX;
+            const clickY = (e.clientY - rect.top) * scaleY;
+
+            // Find clicked piece
+            // Check my pieces
+            const myPieces = gameState.pieces[myColor];
+            for (let i = 0; i < 4; i++) {
+                const pos = myPieces[i];
+                let cx, cy;
+
+                if (pos === -1) {
+                    const baseOffsets = [[1.5,1.5], [1.5,3.5], [3.5,1.5], [3.5,3.5]];
+                    let bx=0, by=0;
+                    if(myColor==='green') bx=9; if(myColor==='yellow') {bx=9; by=9;} if(myColor==='blue') by=9;
+                    cx = (bx + baseOffsets[i][0]) * TILE_SIZE;
+                    cy = (by + baseOffsets[i][1]) * TILE_SIZE;
+                } else {
+                    const coord = getCoord(myColor, pos);
+                    cx = (coord[0] + 0.5) * TILE_SIZE;
+                    cy = (coord[1] + 0.5) * TILE_SIZE;
                 }
-                
-                // *** Khởi tạo bảng Khách Hàng ***
-                if (pageKey === 'quan_ly_khach_hang') {
-                    // Mặc định hiển thị trang 1 với toàn bộ dữ liệu. 
-                    // Ghi đè để không hiển thị spinner ở lần load đầu tiên
-                    const tableBody = document.getElementById('customerTableBody');
-                    const paginationDiv = document.getElementById('customerPagination');
-                    const loadingOverlay = document.getElementById('loadingOverlay');
-                    
-                    if (loadingOverlay) {
-                        loadingOverlay.classList.add('hidden'); // Đảm bảo ẩn
-                    }
 
-                    if (tableBody && paginationDiv) {
-                        renderCustomerTable(MOCK_CUSTOMERS, 1);
-                    }
-                }
-                
-                // *** Khởi tạo bảng Giao Dịch ***
-                if (pageKey === 'giao_dich') {
-                    // Khởi tạo dữ liệu đã lọc bằng toàn bộ dữ liệu mẫu
-                    currentFilteredTransactions = MOCK_TRANSACTIONS; 
-                    
-                    const loadingOverlay = document.getElementById('transactionLoadingOverlay');
-                    if (loadingOverlay) {
-                        loadingOverlay.classList.add('hidden'); // Đảm bảo ẩn
-                    }
-
-                    // Mặc định hiển thị trang 1 với toàn bộ dữ liệu giao dịch
-                    renderTransactionTable(currentFilteredTransactions, 1); 
+                const dist = Math.sqrt((clickX - cx)**2 + (clickY - cy)**2);
+                if (dist < TILE_SIZE * 0.4) {
+                    handlePieceClick(myColor, i);
+                    break;
                 }
             }
-        }
-
-        /** Đóng Sidebar (cho mobile) */
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.remove('opacity-50', 'pointer-events-auto');
-            sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        /** Mở Sidebar (cho mobile) */
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            sidebarOverlay.classList.add('opacity-50', 'pointer-events-auto');
-            sidebarOverlay.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        // Gán sự kiện cho nút menu toggle (mobile)
-        menuToggle.addEventListener('click', () => {
-            openSidebar();
-        });
-
-        // Gán sự kiện cho overlay (click ngoài sidebar để đóng)
-        sidebarOverlay.addEventListener('click', () => {
-            closeSidebar();
-        });
-
-        // Gán sự kiện cho các mục sidebar
-        sidebarItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                // Ngăn chặn sự kiện mặc định nếu link bị disabled
-                if (item.classList.contains('is-disabled')) {
-                    e.preventDefault();
-                    // Tùy chọn: Chuyển hướng đến trang thông báo bảo trì 
-                    const pageKey = item.getAttribute('data-page');
-                    renderPage(pageKey); 
-                    return;
-                }
-                
-                e.preventDefault();
-                const pageKey = item.getAttribute('data-page');
-                renderPage(pageKey);
-                // Đóng sidebar khi click trên mobile
-                if (window.innerWidth < 768) { // md: breakpoint
-                    closeSidebar();
-                }
-            });
-        });
-
-        // Tải trang mặc định khi khởi động
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPage('tong_quan');
         });
 
     </script>
