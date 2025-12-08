@@ -198,7 +198,7 @@
             <!-- Header Modal -->
             <div class="flex justify-between items-center p-5 border-b border-gray-200">
                 <h3 id="taxModalTitle" class="text-xl font-bold text-gray-800 flex items-center">
-                    <i lucide="wallet" class="mr-3 text-blue-600"></i> Pháp lý Doanh Nghiệp
+                    <i lucide="wallet" class="mr-3 text-blue-600"></i> Dữ Liệu Tài Chính & Tiến Độ
                 </h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
                     <i lucide="x" class="w-6 h-6"></i>
@@ -285,6 +285,9 @@
                 let totalDue = specialData.current_balance.value; 
 
                 const details = [
+                    // --- MỤC MỚI: PHÁP LÝ DOANH NGHIỆP (Ở TRÊN ĐẦU) ---
+                    { name: 'Pháp lý doanh nghiệp', value: 'Đã hoàn thành', statusText: 'Hợp lệ', isCurrency: false, customClass: 'text-green-600 font-bold' },
+                    
                     // SỬ DỤNG HÀM MỚI formatNumberWithCommas
                     { name: 'Số dư báo cáo thuế', value: formatNumberWithCommas(specialData.tax_report_balance.value) + ' VND', statusText: specialData.tax_report_balance.statusText, isCurrency: true },
                     { name: 'Số dư hiện tại', value: formatNumberWithCommas(specialData.current_balance.value) + ' VND', statusText: specialData.current_balance.statusText, isCurrency: true },
@@ -388,7 +391,7 @@
             { name: 'Đỗ Công Bằng', id: 'KH00300', accountNumber: '9945673967', type: 'Cá nhân', balance: '21,169,735 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
             { name: 'Nguyễn Thị Thúy', id: 'KH03008', accountNumber: '19035001820019', type: 'Tiết kiệm cơ bản', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
             // Cập nhật Khách hàng Công Ty Công Nghệ Việt Nam
-            { name: 'Công Ty Công Nghệ Việt Nam', id: 'KH00004', accountNumber: '30008686', type: 'Doanh nghiệp', balance: 'Không hiển thị số dư', status: 'Đã hoàn thành', biometrics: 'Đã xác minh' },
+            { name: 'Công Ty Công Nghệ Việt Nam', id: 'KH00004', accountNumber: '30008686', type: 'Pháp lý Doanh nghiệp', balance: 'Không hiển thị số dư', status: 'Đã hoàn thành', biometrics: 'Đã xác minh' },
             { name: 'Trần Thanh Trình', id: 'KH00005', accountNumber: '19035694786013', type: 'Cá nhân', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
             { name: 'Phạm Bích Ngọc', id: 'KH00006', accountNumber: '19034732011016', type: 'Cá nhân cao cấp', balance: '12,327,139,812 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
             { name: 'Hồ Bảo Trân', id: 'KH00007', accountNumber: '148579717', type: 'Cá nhân', balance: '23,430,935 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
