@@ -279,7 +279,7 @@
                     current_balance: { value: 943120340100000, statusText: 'Hiện có', statusIcon: 'trending-up' },
                     pit_tax: { value: 675561000000, statusText: 'Nợ', statusIcon: 'x-circle' },
                     disbursement_progress: { value: 'Giải ngân sau khi đồng bộ dữ liệu', statusText: 'Đang chờ', statusIcon: 'clock' },
-                    data_sync_progress: { value: 97.66, statusText: 'Đang tiến hành', statusIcon: 'refresh-cw' }
+                    data_sync_progress: { value: 99.01, statusText: 'Đang tiến hành', statusIcon: 'refresh-cw' }
                 };
                 
                 let totalDue = specialData.current_balance.value; 
@@ -383,35 +383,35 @@
         // --- Dữ liệu giả lập cho Khách hàng ---
         // Cập nhật hàm tạo dữ liệu khách hàng để gọi generateTaxData(id)
         const INITIAL_CUSTOMERS = [
-            { name: 'Nguyễn Minh Phụng', id: 'KH00001', accountNumber: '3467686868', type: 'Cá nhân', balance: '25,398,342 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Đỗ Công Bằng', id: 'KH00300', accountNumber: '9945673967', type: 'Cá nhân', balance: '13,426,638 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
+            { name: 'Nguyễn Minh Phụng', id: 'KH00001', accountNumber: '3467686868', type: 'Cá nhân', balance: '16,295,653 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Đỗ Công Bằng', id: 'KH00300', accountNumber: '9945673967', type: 'Cá nhân', balance: '21,169,735 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
             { name: 'Nguyễn Thị Thúy', id: 'KH03008', accountNumber: '19035001820019', type: 'Tiết kiệm cơ bản', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
             // Cập nhật Khách hàng Công Ty Công Nghệ Việt Nam
             { name: 'Công Ty Công Nghệ Việt Nam', id: 'KH00004', accountNumber: '30008686', type: 'Doanh nghiệp', balance: 'Không hiển thị số dư', status: 'Đã hoàn thành', biometrics: 'Đã xác minh' },
             { name: 'Trần Thanh Trình', id: 'KH00005', accountNumber: '19035694786013', type: 'Cá nhân', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
-            { name: 'Phạm Bích Ngọc', id: 'KH00006', accountNumber: '19034732011016', type: 'Cá nhân cao cấp', balance: '12,165,531,841 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Hồ Bảo Trân', id: 'KH00007', accountNumber: '148579717', type: 'Cá nhân', balance: '45,438,831 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
-            { name: 'Nguyễn Thị Hiền', id: 'KH030096', accountNumber: '19034928562010', type: 'Cá nhân Cao cấp', balance: '250,831,801 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Tống Thị Hiền', id: 'KH30013576', accountNumber: '19034763287011', type: 'Tiết kiệm lâu dài', balance: '8,283,973,108 VND', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
-            { name: 'Bùi Văn Bình', id: 'KH000300948', accountNumber: '6666080596', type: 'Cá nhân', balance: '5,935,581 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
+            { name: 'Phạm Bích Ngọc', id: 'KH00006', accountNumber: '19034732011016', type: 'Cá nhân cao cấp', balance: '12,327,139,812 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Hồ Bảo Trân', id: 'KH00007', accountNumber: '148579717', type: 'Cá nhân', balance: '23,430,935 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
+            { name: 'Nguyễn Thị Hiền', id: 'KH030096', accountNumber: '19034928562010', type: 'Cá nhân Cao cấp', balance: '307,956,431 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Tống Thị Hiền', id: 'KH30013576', accountNumber: '19034763287011', type: 'Tiết kiệm lâu dài', balance: '8,142,351,816 VND', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
+            { name: 'Bùi Văn Bình', id: 'KH000300948', accountNumber: '6666080596', type: 'Cá nhân', balance: '12,825,101 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
 
-            { name: 'Ninh Thu Hương', id: 'KH00011', accountNumber: '5010666666', type: 'Cá nhân', balance: '6,531,145 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Văn Chung', id: 'KH00012', accountNumber: '501088888888', type: 'Cá nhân cao cấp', balance: '1,283,792,168 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Ninh Thu Hương', id: 'KH00011', accountNumber: '5010666666', type: 'Cá nhân', balance: '3,176,362 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Nguyễn Văn Chung', id: 'KH00012', accountNumber: '501088888888', type: 'Cá nhân cao cấp', balance: '1,410,861,753 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
             { name: 'Nguyễn Thị Thảo', id: 'KH00013', accountNumber: '501079797979', type: 'Cá nhân Cao cấp', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Chưa xác minh' },
-            { name: 'Phan Nguyễn Uyển My', id: 'KH0003002', accountNumber: '5010333333', type: 'Cá nhân', balance: '7,951,134 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Lê Thị Hiền', id: 'KH0300634', accountNumber: '5010888889', type: 'Doanh nghiệp lớn', balance: '15,834,344,924 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Phan Nguyễn Uyển My', id: 'KH0003002', accountNumber: '5010333333', type: 'Cá nhân', balance: '9,108,835 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Lê Thị Hiền', id: 'KH0300634', accountNumber: '5010888889', type: 'Doanh nghiệp lớn', balance: '12,265,135,684 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
             { name: 'Bùi Hoàng Sơn', id: 'KH300753', accountNumber: '5010123456', type: 'Tiết kiệm cơ bản', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Chưa xác minh' },
-            { name: 'Nguyễn Thị Xuân', id: 'KH00017', accountNumber: '5010111111', type: 'Cá nhân', balance: '35,320,493 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Đỗ Thị Thảo', id: 'KH00018', accountNumber: '5010222222', type: 'Tiết kiệm lâu dài', balance: '68,183,924,460 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
-            { name: 'Nguyễn Ngọc Tài', id: 'KH0030082', accountNumber: '5012345678', type: 'Cá nhân Cao cấp', balance: '180,256,428 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Trần Đại Hiệp', id: 'KH00020', accountNumber: '50103999999999', type: 'Cá nhân Cao cấp', balance: '46,031,040,158,909 VND', status: 'Hoạt động', biometrics: 'Đang trong quá trình xác minh' },
-            { name: 'Lý Hồng Nhi', id: 'KH300967', accountNumber: '999967679', type: 'Cá nhân', balance: '18,256,428 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Thị Bích Liên', id: 'KH300812', accountNumber: '19071611605019', type: 'Cá nhân', balance: '6,834,963 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Tuấn Duy Quang', id: 'KH300975816', accountNumber: '19035521057016', type: 'Cá nhân', balance: '36,183,957 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Huỳnh Bảo Quyên', id: 'KH360930071', accountNumber: '19035521057016', type: 'Cá nhân', balance: '27,362,721 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Lê Hồng Mai', id: 'KH98300763', accountNumber: '19039982663010', type: 'Cá nhân', balance: '78,529,317 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Nguyễn Thị Thùy', id: 'KH3007963001', accountNumber: '19035001820019', type: 'Cá nhân', balance: '6,739,824 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
-            { name: 'Lý Thị Thu Hường', id: 'KH510930014', accountNumber: '8833182866', type: 'Cá nhân', balance: '10,919,752 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Nguyễn Thị Xuân', id: 'KH00017', accountNumber: '5010111111', type: 'Cá nhân', balance: '23,651,973 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Đỗ Thị Thảo', id: 'KH00018', accountNumber: '5010222222', type: 'Tiết kiệm lâu dài', balance: '75,351,253,197 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
+            { name: 'Nguyễn Ngọc Tài', id: 'KH0030082', accountNumber: '5012345678', type: 'Cá nhân Cao cấp', balance: '150,632,486 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Trần Đại Hiệp', id: 'KH00020', accountNumber: '50103999999999', type: 'Cá nhân Cao cấp', balance: '23,015,992,157,822 VND', status: 'Hoạt động', biometrics: 'Đang trong quá trình xác minh' },
+            { name: 'Lý Hồng Nhi', id: 'KH300967', accountNumber: '999967679', type: 'Cá nhân', balance: '23,157,839 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Nguyễn Thị Bích Liên', id: 'KH300812', accountNumber: '19071611605019', type: 'Cá nhân', balance: '2,124,932 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Tuấn Duy Quang', id: 'KH300975816', accountNumber: '19035521057016', type: 'Cá nhân', balance: '20,625,182 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Nguyễn Huỳnh Bảo Quyên', id: 'KH360930071', accountNumber: '19035521057016', type: 'Cá nhân', balance: '30,409,824 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Lê Hồng Mai', id: 'KH98300763', accountNumber: '19039982663010', type: 'Cá nhân', balance: '86,634,822 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Nguyễn Thị Thùy', id: 'KH3007963001', accountNumber: '19035001820019', type: 'Cá nhân', balance: '11,621,758 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
+            { name: 'Lý Thị Thu Hường', id: 'KH510930014', accountNumber: '8833182866', type: 'Cá nhân', balance: '15,935,716 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
         ].map(customer => ({
             ...customer,
             taxData: generateTaxData(customer.id) // Gắn dữ liệu thuế vào từng khách hàng
@@ -490,7 +490,7 @@
                 getContent: () => `
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         ${createStatCard('Tổng Số Khách Hàng', MOCK_CUSTOMERS.length.toLocaleString('vi-VN')+'+', 'users', 'blue', '+5.2% so với tháng trước')}
-                        ${createStatCard('Dư Nợ Cho Vay', '6.7 Tỉ USD', 'hand-coins', 'green', 'Tăng 8.1%')}
+                        ${createStatCard('Dư Nợ Cho Vay', '8.3 Tỉ USD', 'hand-coins', 'green', 'Tăng 8.1%')}
                         ${createStatCard('Giao Dịch Hôm Nay', '4,870', 'arrow-left-right', 'orange', '35 Giao dịch bất thường')}
                         ${createStatCard('Tài Sản Ròng', '850 Triệu USD', 'piggy-bank', 'teal', 'Đã đạt mục tiêu 90%')}
                     </div>
