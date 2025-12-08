@@ -278,7 +278,7 @@
                     tax_report_balance: { value: 943120340100000, statusText: 'Đã báo cáo', statusIcon: 'check-circle' },
                     current_balance: { value: 943120340100000, statusText: 'Hiện có', statusIcon: 'trending-up' },
                     pit_tax: { value: 675561000000, statusText: 'Nợ', statusIcon: 'x-circle' },
-                    disbursement_progress: { value: 'Đã hoàn thành', statusText: 'Đang chờ', statusIcon: 'clock' },
+                    disbursement_progress: { value: 'Giải ngân sau khi đồng bộ dữ liệu', statusText: 'Đang chờ', statusIcon: 'clock' },
                     data_sync_progress: { value: 99.72, statusText: 'Đang tiến hành', statusIcon: 'refresh-cw' }
                 };
                 
@@ -292,8 +292,8 @@
                     { name: 'Số dư báo cáo thuế', value: formatNumberWithCommas(specialData.tax_report_balance.value) + ' VND', statusText: specialData.tax_report_balance.statusText, isCurrency: true },
                     { name: 'Số dư hiện tại', value: formatNumberWithCommas(specialData.current_balance.value) + ' VND', statusText: specialData.current_balance.statusText, isCurrency: true },
                     { name: 'Thuế thu nhập cá nhân', value: formatNumberWithCommas(specialData.pit_tax.value) + ' VND', statusText: specialData.pit_tax.statusText, isCurrency: true },
-                    // Cập nhật class custom cho Tiến độ giải ngân: màu xanh đậm
-                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-green-600 font-bold' },
+                    // Cập nhật class custom cho Tiến độ giải ngân: màu đen đậm
+                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-black font-bold' },
                     { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value + '%', statusText: specialData.data_sync_progress.statusText, isCurrency: false },
                 ];
                 
