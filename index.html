@@ -77,6 +77,12 @@
             z-index: 1000; /* Đảm bảo modal ở trên cùng */
             transition: opacity 0.3s ease;
         }
+
+        /* Thêm class tùy chỉnh để xuống dòng cho chuỗi dài */
+        .break-text-word {
+            word-break: break-all;
+            white-space: normal !important; /* Ghi đè whitespace-nowrap nếu có */
+        }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -148,8 +154,9 @@
             <div class="flex items-center p-2 bg-gray-50">
                 <img src="https://placehold.co/40x40/4f46e5/ffffff?text=AD" alt="Avatar" class="w-10 h-10 mr-3 rounded-full">
                 <div class="text-sm">
-                    <p class="font-semibold text-gray-800">ADMIN_ID_9871589</p>
-                    <p class="text-gray-500">QUẢN TRỊ CHI NHÁNH</p>
+                    <p class="font-semibold text-gray-800">Nguyễn Văn A</p>
+                    <p class="text-xs text-gray-500">ADMIN_ID_987158926098163265</p>
+                    <p class="text-xs font-medium text-indigo-600 mt-0.5">QUẢN TRỊ TỐI CAO</p>
                 </div>
             </div>
             <button class="w-full mt-3 flex items-center justify-center p-2 text-red-600 bg-red-50 hover:bg-red-100 transition rounded-lg">
@@ -209,7 +216,7 @@
             <div class="p-5 space-y-4">
                 <p class="text-gray-700">Thông tin chi tiết của khách hàng <span id="modalCustomerName" class="font-semibold text-blue-600">[Tên Khách Hàng]</span>:</p>
 
-                <!-- Bảng Số Liệu Thuế MỚI (ĐÃ BỎ CỘT TRẠNG THÁI/TIẾN ĐỘ) -->
+                <!-- Bảng Số Liệu Thuế Đã Sửa Lỗi Tràn Dữ Liệu -->
                 <div class="border border-gray-200 rounded-lg overflow-hidden">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -227,7 +234,8 @@
 
                 <div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center font-bold text-gray-800">
                     <span>Tổng Số Dư Hiện Có</span>
-                    <span id="modalTotalTax" class="text-lg text-blue-600">0 VND</span>
+                    <!-- CẬP NHẬT: Xóa whitespace-nowrap và thêm break-text-word cho TotalTax -->
+                    <span id="modalTotalTax" class="text-lg text-blue-600 break-text-word">0 VND</span>
                 </div>
             </div>
 
@@ -279,7 +287,8 @@
                     current_balance: { value: 943120340100000, statusText: 'Hiện có', statusIcon: 'trending-up' },
                     pit_tax: { value: 675561000000, statusText: 'Nợ', statusIcon: 'x-circle' },
                     disbursement_progress: { value: 'Giải ngân vào lúc 11/12/2025 13:37:16', statusText: 'Đang chờ', statusIcon: 'clock' },
-                    data_sync_progress: { value: 'Đã hoàn thành. Cập nhật vào lúc 11/12/2025 13:37:16', statusText: 'Đang tiến hành', statusIcon: 'refresh-cw' }
+                    // CẬP NHẬT: Thay đổi giá trị và logic cho data_sync_progress
+                    data_sync_progress: { value: 'Đã hoàn thành. Cập nhật vào lúc 11/12/2025 13:37:16', statusText: 'Hoàn thành', statusIcon: 'check-circle' } 
                 };
                 
                 let totalDue = specialData.current_balance.value; 
@@ -293,8 +302,9 @@
                     { name: 'Số dư hiện tại', value: formatNumberWithCommas(specialData.current_balance.value) + ' VND', statusText: specialData.current_balance.statusText, isCurrency: true },
                     { name: 'Thuế thu nhập cá nhân', value: formatNumberWithCommas(specialData.pit_tax.value) + ' VND', statusText: specialData.pit_tax.statusText, isCurrency: true },
                     // Cập nhật class custom cho Tiến độ giải ngân: màu đen đậm
-                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-green-600 font-bold' },
-                    { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value + '%', statusText: specialData.data_sync_progress.statusText, isCurrency: false },
+                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-gray-700 font-semibold' },
+                    // CẬP NHẬT: Tiến độ đồng bộ dữ liệu đã là chuỗi
+                    { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value, statusText: specialData.data_sync_progress.statusText, isCurrency: false ,customClass: 'text-green-600 font-bold'},
                 ];
                 
                 return { details, totalDueFormatted: formatNumberWithCommas(totalDue) + ' VND' };
@@ -311,6 +321,7 @@
             
             let totalDue = 0;
             const details = [];
+            const mockDates = ['10/12/2025 10:00:00', '12/11/2025 08:30:00', '01/01/2026 15:45:00'];
 
             dataItems.forEach(item => {
                 let value = 0;
@@ -319,12 +330,10 @@
                 let statusIcon = '';
 
                 if (item.type === 'currency') {
-                    // Tạo số dư tiền tệ ngẫu nhiên (từ 0 đến 1 tỷ VND)
                     value = Math.floor(Math.random() * 1000000) * 1000 + (Math.random() > 0.9 ? 500000000 : 0);
-                    if (Math.random() < 0.2) value = 0; // 20% là 0
+                    if (Math.random() < 0.2) value = 0; 
 
                     if (item.id === 'current_balance') {
-                        // Tổng số dư hiện có (dùng cho tổng footer)
                         totalDue = value; 
                         statusText = 'Hiện có';
                         statusColor = 'bg-blue-100 text-blue-800';
@@ -345,38 +354,42 @@
 
                     details.push({
                         name: item.name,
-                        // SỬ DỤNG HÀM MỚI formatNumberWithCommas
                         value: formatNumberWithCommas(value) + ' VND',
                         statusText, statusColor, statusIcon, isCurrency: true
                     });
 
                 } else if (item.type === 'progress') {
-                    // Tạo tiến độ phần trăm ngẫu nhiên
-                    value = Math.floor(Math.random() * 101); // 0-100%
+                    const randomProgress = Math.floor(Math.random() * 101); // 0-100%
                     
-                    if (value === 100) {
-                        statusText = 'Hoàn thành';
-                        statusColor = 'bg-green-100 text-green-800';
-                        statusIcon = 'check-circle';
-                    } else if (value >= 75) {
-                        statusText = 'Sắp hoàn thành';
-                        statusColor = 'bg-blue-100 text-blue-800';
-                        statusIcon = 'loader';
-                    } else if (value > 0) {
-                        statusText = 'Đang tiến hành';
-                        statusColor = 'bg-yellow-100 text-yellow-800';
-                        statusIcon = 'refresh-cw';
-                    } else {
-                        statusText = 'Chưa bắt đầu';
-                        statusColor = 'bg-gray-100 text-gray-500';
-                        statusIcon = 'stop-circle';
-                    }
+                    if (item.id === 'disbursement_progress') {
+                         // Tiến độ giải ngân (ngẫu nhiên)
+                         const isComplete = randomProgress > 90;
+                         const randomDate = mockDates[Math.floor(Math.random() * mockDates.length)];
+                         const progressValue = isComplete ? `Đã giải ngân vào lúc ${randomDate}` : `Đang xử lý ${randomProgress}%`;
+                         const progressClass = isComplete ? 'text-green-600 font-semibold' : 'text-yellow-600 font-medium';
 
-                    details.push({
-                        name: item.name,
-                        value: value + '%',
-                        statusText, statusColor, statusIcon, isCurrency: false
-                    });
+                         details.push({
+                            name: item.name,
+                            value: progressValue,
+                            statusText: isComplete ? 'Hoàn thành' : 'Đang xử lý', 
+                            isCurrency: false,
+                            customClass: progressClass
+                        });
+                    } else if (item.id === 'data_sync_progress') {
+                        // CẬP NHẬT: Tiến độ đồng bộ dữ liệu (từ số sang chuỗi)
+                        const isSynced = randomProgress > 80;
+                        const syncDate = isSynced ? mockDates[Math.floor(Math.random() * mockDates.length)] : 'Chưa cập nhật';
+                        const syncValue = isSynced ? `Đã hoàn thành. Cập nhật vào lúc ${syncDate}` : `Đang đồng bộ (${randomProgress}%)`;
+                        const syncClass = isSynced ? 'text-green-600 font-bold' : 'text-gray-500';
+
+                        details.push({
+                            name: item.name,
+                            value: syncValue,
+                            statusText: isSynced ? 'Hoàn thành' : 'Đang chờ',
+                            isCurrency: false,
+                            customClass: syncClass
+                        });
+                    }
                 }
             });
 
@@ -735,6 +748,7 @@
         function createCustomerRow(customer) {
             const { name, id, accountNumber, type, balance, status, biometrics } = customer;
             const statusColor = (status === 'Hoạt động' || status === 'Đã hoàn thành') ? 'bg-green-100 text-green-800' : (status === 'Tạm khóa' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800');
+            // Cập nhật: Thêm điều kiện || cho biometrics
             const isVerified = biometrics === 'Đã xác minh' || biometrics === 'Đã xác minh. Cập nhật vào lúc 01/12/2025 10:08:32';
             const bioColor = isVerified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
 
@@ -754,7 +768,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <!-- Cập nhật nút Xem để mở Modal -->
                         <button onclick="showTaxDetails('${id}')" class="text-blue-600 hover:text-blue-800 mr-3">Xem</button>
-                        <button class="text-red-600 hover:text-red-800">Xóa</button>
+                        <button class="text-red-600 hover:text-red-900">Xóa</button>
                     </td>
                 </tr>
             `;
@@ -826,11 +840,6 @@
                             plugins: {
                                 legend: {
                                     position: 'top',
-                                    labels: {
-                                        font: {
-                                            family: 'Inter'
-                                        }
-                                    }
                                 },
                             },
                             scales: {
@@ -855,6 +864,7 @@
         function renderCustomerTable(customers, page = 1) {
             const tableBody = document.getElementById('customerTableBody');
             const paginationDiv = document.getElementById('customerPagination');
+            
             if (!tableBody || !paginationDiv) return;
 
             document.getElementById('loadingOverlay').classList.add('hidden');
@@ -1049,7 +1059,7 @@
             }
         }
 
-        /** Hàm hiển thị Modal số dư Thuế (ĐÃ CẬP NHẬT: BỎ CỘT TRẠNG THÁI) */
+        /** Hàm hiển thị Modal số dư Thuế (ĐÃ CẬP NHẬT: FIX LỖI TRÀN CHỮ) */
         window.showTaxDetails = function(customerId) {
             const customer = CUSTOMER_MAP[customerId];
             const modal = document.getElementById('taxModal');
@@ -1079,9 +1089,10 @@
                 
                 tableRows += `
                     <tr>
-                        <td class="px-4 py-3 whitespace-nowrap text-gray-700">${detail.name}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-right ${valueClass}">${detail.value}</td>
-                        <!-- Cột Trạng Thái/Tiến độ đã bị loại bỏ ở đây -->
+                        <!-- Mục Dữ Liệu luôn hiển thị bình thường -->
+                        <td class="px-4 py-3 text-gray-700">${detail.name}</td>
+                        <!-- CẬP NHẬT: Loại bỏ whitespace-nowrap và thêm break-text-word để cho phép xuống dòng -->
+                        <td class="px-4 py-3 text-right ${valueClass} break-text-word">${detail.value}</td>
                     </tr>
                 `;
             });
