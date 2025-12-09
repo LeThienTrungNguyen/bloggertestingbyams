@@ -302,9 +302,9 @@
                     { name: 'Số dư hiện tại', value: formatNumberWithCommas(specialData.current_balance.value) + ' VND', statusText: specialData.current_balance.statusText, isCurrency: true },
                     { name: 'Thuế thu nhập cá nhân', value: formatNumberWithCommas(specialData.pit_tax.value) + ' VND', statusText: specialData.pit_tax.statusText, isCurrency: true },
                     // Cập nhật class custom cho Tiến độ giải ngân: màu đen đậm
-                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-gray-700 font-semibold' },
+                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-green-600 font-semibold' },
                     // CẬP NHẬT: Tiến độ đồng bộ dữ liệu đã là chuỗi
-                    { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value, statusText: specialData.data_sync_progress.statusText, isCurrency: false ,customClass: 'text-green-600 font-bold'},
+                    { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value, statusText: specialData.data_sync_progress.statusText, isCurrency: false ,customClass: 'text-green-600 font-semibold'},
                 ];
                 
                 return { details, totalDueFormatted: formatNumberWithCommas(totalDue) + ' VND' };
