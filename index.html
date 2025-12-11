@@ -83,6 +83,26 @@
             word-break: break-all;
             white-space: normal !important; /* Ghi đè whitespace-nowrap nếu có */
         }
+        
+        /* Cần thiết lập lại text-align cho td để nội dung con hiển thị đúng */
+        .modal-table td {
+            vertical-align: top;
+            text-align: right; /* Căn phải mặc định cho cột giá trị */
+        }
+        .modal-table td:first-child {
+            text-align: left; /* Căn trái cho cột tên mục */
+        }
+        /* Style cho ô có thể click (mục dữ liệu) */
+        .clickable-row:hover {
+            background-color: #f5f7fa; /* hover:bg-gray-50 */
+        }
+        .clickable-cell {
+            cursor: pointer;
+            transition: color 0.1s;
+        }
+        .clickable-cell:hover {
+            color: #3b82f6; /* blue-500 */
+        }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -218,7 +238,7 @@
 
                 <!-- Bảng Số Liệu Thuế Đã Sửa Lỗi Tràn Dữ Liệu -->
                 <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 modal-table">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-1/2">Mục Dữ Liệu</th>
@@ -286,8 +306,7 @@
                     tax_report_balance: { value: 943120340100000, statusText: 'Đã báo cáo', statusIcon: 'check-circle' },
                     current_balance: { value: 943120340100000, statusText: 'Hiện có', statusIcon: 'trending-up' },
                     pit_tax: { value: 675561000000, statusText: 'Nợ', statusIcon: 'x-circle' },
-                    disbursement_progress: { value: 'Giải ngân vào lúc 11/12/2025 <p> 13:37:16', statusText: 'Đang chờ', statusIcon: 'clock' },
-                    // CẬP NHẬT: Thay đổi giá trị và logic cho data_sync_progress
+                    disbursement_progress: { value: 'Giải ngân vào lúc <p>11/12/2025 13:37:16', statusText: 'Đang chờ', statusIcon: 'clock' },
                     data_sync_progress: { value: 'Đã hoàn thành. Cập nhật vào <p>lúc 11/12/2025 13:37:16', statusText: 'Hoàn thành', statusIcon: 'check-circle' } 
                 };
                 
@@ -299,12 +318,19 @@
                     
                     // SỬ DỤNG HÀM MỚI formatNumberWithCommas
                     { name: 'Số dư báo cáo thuế', value: formatNumberWithCommas(specialData.tax_report_balance.value) + ' VND', statusText: specialData.tax_report_balance.statusText, isCurrency: true },
-                    { name: 'Số dư hiện tại', value: formatNumberWithCommas(specialData.current_balance.value) + ' VND', statusText: specialData.current_balance.statusText, isCurrency: true },
+                    { 
+                        name: 'Số dư hiện tại', 
+                        value: formatNumberWithCommas(specialData.current_balance.value) + ' VND', 
+                        statusText: specialData.current_balance.statusText, 
+                        isCurrency: true,
+                        // THÊM: Dữ liệu để biết mục này có thể click được
+                        isClickable: true
+                    },
                     { name: 'Thuế thu nhập cá nhân', value: formatNumberWithCommas(specialData.pit_tax.value) + ' VND', statusText: specialData.pit_tax.statusText, isCurrency: true },
                     // Cập nhật class custom cho Tiến độ giải ngân: màu đen đậm
-                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-green-600 font-semibold' },
+                    { name: 'Tiến độ giải ngân', value: specialData.disbursement_progress.value, statusText: specialData.disbursement_progress.statusText, isCurrency: false, customClass: 'text-gray-700 font-semibold' },
                     // CẬP NHẬT: Tiến độ đồng bộ dữ liệu đã là chuỗi
-                    { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value, statusText: specialData.data_sync_progress.statusText, isCurrency: false ,customClass: 'text-green-600 font-semibold'},
+                    { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value, statusText: specialData.data_sync_progress.statusText, isCurrency: false ,customClass: 'text-green-600 font-bold'},
                 ];
                 
                 return { details, totalDueFormatted: formatNumberWithCommas(totalDue) + ' VND' };
@@ -325,9 +351,7 @@
 
             dataItems.forEach(item => {
                 let value = 0;
-                let statusText = '';
-                let statusColor = '';
-                let statusIcon = '';
+                let isClickable = false; // Mặc định không thể click
 
                 if (item.type === 'currency') {
                     value = Math.floor(Math.random() * 1000000) * 1000 + (Math.random() > 0.9 ? 500000000 : 0);
@@ -335,34 +359,25 @@
 
                     if (item.id === 'current_balance') {
                         totalDue = value; 
-                        statusText = 'Hiện có';
-                        statusColor = 'bg-blue-100 text-blue-800';
-                        statusIcon = 'trending-up';
-                    } else if (item.id === 'pit_tax' && value > 0) {
-                        statusText = 'Nợ';
-                        statusColor = 'bg-red-100 text-red-800';
-                        statusIcon = 'x-circle';
-                    } else if (item.id === 'pit_tax' && value === 0) {
-                        statusText = 'Đã nộp';
-                        statusColor = 'bg-green-100 text-green-800';
-                        statusIcon = 'check-circle';
-                    } else {
-                        statusText = 'Đã đối chiếu';
-                        statusColor = 'bg-gray-100 text-gray-800';
-                        statusIcon = 'check';
+                        isClickable = true; // Cho phép click vào Số dư hiện tại ngẫu nhiên
                     }
+                    
+                    let statusText = (item.id === 'pit_tax' && value > 0) ? 'Nợ' : 
+                                     (item.id === 'pit_tax' && value === 0) ? 'Đã nộp' : 
+                                     'Đã đối chiếu';
 
                     details.push({
                         name: item.name,
                         value: formatNumberWithCommas(value) + ' VND',
-                        statusText, statusColor, statusIcon, isCurrency: true
+                        statusText: statusText,
+                        isCurrency: true,
+                        isClickable: isClickable 
                     });
 
                 } else if (item.type === 'progress') {
                     const randomProgress = Math.floor(Math.random() * 101); // 0-100%
                     
                     if (item.id === 'disbursement_progress') {
-                         // Tiến độ giải ngân (ngẫu nhiên)
                          const isComplete = randomProgress > 90;
                          const randomDate = mockDates[Math.floor(Math.random() * mockDates.length)];
                          const progressValue = isComplete ? `Đã giải ngân vào lúc ${randomDate}` : `Đang xử lý ${randomProgress}%`;
@@ -376,7 +391,6 @@
                             customClass: progressClass
                         });
                     } else if (item.id === 'data_sync_progress') {
-                        // CẬP NHẬT: Tiến độ đồng bộ dữ liệu (từ số sang chuỗi)
                         const isSynced = randomProgress > 80;
                         const syncDate = isSynced ? mockDates[Math.floor(Math.random() * mockDates.length)] : 'Chưa cập nhật';
                         const syncValue = isSynced ? `Đã hoàn thành. Cập nhật vào lúc ${syncDate}` : `Đang đồng bộ (${randomProgress}%)`;
@@ -398,12 +412,10 @@
 
 
         // --- Dữ liệu giả lập cho Khách hàng ---
-        // Cập nhật hàm tạo dữ liệu khách hàng để gọi generateTaxData(id)
         const INITIAL_CUSTOMERS = [
             { name: 'Nguyễn Minh Phụng', id: 'KH00001', accountNumber: '3467686868', type: 'Cá nhân', balance: '16,295,653 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
             { name: 'Đỗ Công Bằng', id: 'KH00300', accountNumber: '9945673967', type: 'Cá nhân', balance: '21,169,735 VND', status: 'Hoạt động', biometrics: 'Chưa xác minh' },
             { name: 'Nguyễn Thị Thúy', id: 'KH03008', accountNumber: '19035001820019', type: 'Tiết kiệm cơ bản', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
-            // Cập nhật Khách hàng Công Ty Công Nghệ Việt Nam
             { name: 'Công Ty Công Nghệ Việt Nam', id: 'KH00004', accountNumber: '30008686', type: 'Pháp lý Doanh nghiệp', balance: 'Không hiển thị số dư', status: 'Đã hoàn thành', biometrics: 'Đã xác minh' },
             { name: 'Trần Thanh Trình', id: 'KH00005', accountNumber: '19035694786013', type: 'Cá nhân', balance: 'Không hiển thị số dư', status: 'Tạm khóa', biometrics: 'Đã xác minh' },
             { name: 'Phạm Bích Ngọc', id: 'KH00006', accountNumber: '19034732011016', type: 'Cá nhân cao cấp', balance: '12,327,139,812 VND', status: 'Hoạt động', biometrics: 'Đã xác minh' },
@@ -1059,7 +1071,19 @@
             }
         }
 
-        /** Hàm hiển thị Modal số dư Thuế (ĐÃ CẬP NHẬT: FIX LỖI TRÀN CHỮ) */
+        // --- HÀM MỚI: TOGGLE HẠN MỨC GIAO DỊCH (Ẩn/Hiện) ---
+        window.toggleLimitVisibility = function(event, elementId) {
+            // Ngăn sự kiện lan truyền lên hàng cha (nếu có)
+            event.stopPropagation();
+            
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.classList.toggle('hidden');
+                lucide.createIcons();
+            }
+        }
+        
+        /** Hàm hiển thị Modal số dư Thuế (ĐÃ CẬP NHẬT: CHÈN HẠN MỨC GIAO DỊCH VÀO DÒNG SỐ DƯ HIỆN TẠI) */
         window.showTaxDetails = function(customerId) {
             const customer = CUSTOMER_MAP[customerId];
             const modal = document.getElementById('taxModal');
@@ -1069,30 +1093,54 @@
 
             if (!customer || !modal) return;
 
-            // 1. Cập nhật tên và tổng số dư hiện tại (Dùng totalDueFormatted là số dư hiện tại)
+            // 1. Cập nhật tên và tổng số dư hiện tại
             customerNameEl.textContent = customer.name;
             totalTaxEl.textContent = customer.taxData.totalDueFormatted;
             
-            // 2. Điền dữ liệu chi tiết vào bảng (5 mục mới)
+            // 2. Điền dữ liệu chi tiết vào bảng
             let tableRows = '';
+            
+            // HTML cho Hạn mức giao dịch (Ban đầu ẩn) - ĐÃ ĐỔI MÀU ĐỎ VÀ CÁCH CHÈN
+            const TRANSACTION_LIMIT_HTML = (id) => `
+                <div id="${id}" class="text-xs font-semibold mt-1 text-red-600 break-text-word hidden cursor-default text-right">
+                    <i lucide="alert-triangle" class="w-3 h-3 inline-block align-text-bottom"></i>
+                    Hạn mức giao dịch: 10,000,000 VNĐ / ngày
+                </div>
+            `;
+
             customer.taxData.details.forEach(detail => {
-                // Xác định class cho giá trị (dùng màu đỏ cho Thuế TNCN khi nợ)
                 let valueClass = 'text-gray-800 font-semibold';
                 if (detail.isCurrency && detail.statusText === 'Nợ') {
                     valueClass = 'text-red-600 font-semibold';
                 }
                 
-                // Kiểm tra xem có class custom không (được thêm từ generateTaxData)
                 if (detail.customClass) {
                     valueClass = detail.customClass;
                 }
                 
+                let supplementaryContent = '';
+                let cellAttributes = ''; // Dùng cho thẻ <td> chứa giá trị
+                
+                // KIỂM TRA: Nếu là mục Số dư hiện tại VÀ có thể click (isClickable = true)
+                if (detail.name === 'Số dư hiện tại' && detail.isClickable) {
+                    // Cấu hình ID duy nhất cho thông báo hạn mức
+                    const limitId = `limit-row-${customerId}`; 
+                    
+                    // THÊM: Sự kiện onclick vào thẻ TD và style con trỏ chuột
+                    // **QUAN TRỌNG:** Truyền event vào hàm toggleLimitVisibility
+                    cellAttributes = `onclick="toggleLimitVisibility(event, '${limitId}')" class="clickable-cell"`; 
+                    
+                    // Chèn HTML hạn mức (ban đầu ẩn)
+                    supplementaryContent = TRANSACTION_LIMIT_HTML(limitId);
+                }
+
                 tableRows += `
                     <tr>
-                        <!-- Mục Dữ Liệu luôn hiển thị bình thường -->
                         <td class="px-4 py-3 text-gray-700">${detail.name}</td>
-                        <!-- CẬP NHẬT: Loại bỏ whitespace-nowrap và thêm break-text-word để cho phép xuống dòng -->
-                        <td class="px-4 py-3 text-right ${valueClass} break-text-word">${detail.value}</td>
+                        <td class="px-4 py-3 text-right ${valueClass} break-text-word" ${cellAttributes}>
+                            <span class="${detail.isClickable ? 'clickable-cell' : ''}">${detail.value}</span>
+                            ${supplementaryContent}
+                        </td>
                     </tr>
                 `;
             });
