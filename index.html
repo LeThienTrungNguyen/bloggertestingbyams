@@ -303,7 +303,7 @@
             // Xử lý dữ liệu đặc biệt cho Công Ty Công Nghệ Việt Nam (KH00004)
             if (customerId === 'KH00004') {
                 const specialData = {
-                    tax_report_balance: { value: 943120340100000, statusText: 'Đã báo cáo', statusIcon: 'check-circle',customClass: 'text-green-600 font-bold' },
+                    tax_report_balance: { value: 943120340100000, statusText: 'Đã báo cáo', statusIcon: 'check-circle' },
                     current_balance: { value: 943120340100000, statusText: 'Hiện có', statusIcon: 'trending-up',customClass: 'text-green-600 font-bold' },
                     pit_tax: { value: 675561000000, statusText: 'Nợ', statusIcon: 'x-circle' },
                     disbursement_progress: { value: 'Hoàn thành bút toán. <p>Được cấp phép giao dịch vào lúc <p>05/01/2026 14:02:21', statusText: 'Hoàn thành', statusIcon: 'clock' },
@@ -317,14 +317,14 @@
                     { name: 'Pháp lý doanh nghiệp', value: 'Đã hoàn thành', statusText: 'Hợp lệ', isCurrency: false, customClass: 'text-green-600 font-bold' },
                     
                     // SỬ DỤNG HÀM MỚI formatNumberWithCommas
-                    { name: 'Số dư báo cáo thuế', value: formatNumberWithCommas(specialData.tax_report_balance.value) + ' VND', statusText: specialData.tax_report_balance.statusText, isCurrency: true },
+                    { name: 'Số dư báo cáo thuế', value: formatNumberWithCommas(specialData.tax_report_balance.value) + ' VND', statusText: specialData.tax_report_balance.statusText, isCurrency: true,customClass: 'text-green-600 font-bold' },
                     { 
                         name: 'Số dư hiện tại', 
                         value: formatNumberWithCommas(specialData.current_balance.value) + ' VND', 
                         statusText: specialData.current_balance.statusText, 
                         isCurrency: true,
                         // THÊM: Dữ liệu để biết mục này có thể click được
-                        isClickable: true
+                        isClickable: true,customClass: 'text-green-600 font-bold'
                     },
                     { name: 'Thuế thu nhập cá nhân', value: formatNumberWithCommas(specialData.pit_tax.value) + ' VND', statusText: specialData.pit_tax.statusText, isCurrency: true ,customClass: 'text-green-600 font-semibold'},
                     // Cập nhật class custom cho Tiến độ giải ngân: màu đen đậm
