@@ -303,8 +303,8 @@
             // Xử lý dữ liệu đặc biệt cho Công Ty Công Nghệ Việt Nam (KH00004)
             if (customerId === 'KH00004') {
                 const specialData = {
-                    tax_report_balance: { value: 943120340100000, statusText: 'Đã báo cáo', statusIcon: 'check-circle' },
-                    current_balance: { value: 943120340100000, statusText: 'Hiện có', statusIcon: 'trending-up' },
+                    tax_report_balance: { value: 943120340100000, statusText: 'Đã báo cáo', statusIcon: 'check-circle',customClass: 'text-green-600 font-bold' },
+                    current_balance: { value: 943120340100000, statusText: 'Hiện có', statusIcon: 'trending-up',customClass: 'text-green-600 font-bold' },
                     pit_tax: { value: 675561000000, statusText: 'Nợ', statusIcon: 'x-circle' },
                     disbursement_progress: { value: 'Hoàn thành bút toán. <p>Được cấp phép giao dịch vào lúc <p>05/01/2026 14:02:21', statusText: 'Hoàn thành', statusIcon: 'clock' },
                     data_sync_progress: { value: 'Đã hoàn thành', statusText: 'Hoàn thành', statusIcon: 'check-circle' } 
