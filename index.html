@@ -308,7 +308,8 @@
                     pit_tax: { value: 1175561854000, statusText: 'Nợ', statusIcon: 'x-circle' },
                     disbursement_progress: { value: 'Đã hoàn tất toàn bộ thủ tục. Được phép giao dịch sau khi cập nhật sau thuế', statusText: 'Hoàn thành', statusIcon: 'clock' },
                     data_sync_progress: { value: 'Đã hoàn thành', statusText: 'Hoàn thành', statusIcon: 'check-circle' }, 
-			data_report_quarter_1_2026 : {value : 'Đã hoàn thành.Cập nhật thuế doanh nghiệp và thuế TNCN hoàn chỉnh vào lúc <p>16/02/2024 13:45:01', statusText: 'Hoàn thành', statusIcon: 'check-circle'}
+			data_report_quarter_1_2026 : {value : 'Đã hoàn thành.Cập nhật thuế doanh nghiệp và thuế TNCN hoàn chỉnh vào lúc <p>16/02/2024 13:45:01', statusText: 'Hoàn thành', statusIcon: 'check-circle'},
+			sum_company_profile: {value : 'Hoàn tất', statusText: 'Hoàn thành', statusIcon: 'check-circle'}
                 };
                 
                 let totalDue = specialData.current_balance.value; 
@@ -334,6 +335,7 @@
                     { name: 'Tiến độ đồng bộ dữ liệu', value: specialData.data_sync_progress.value, statusText: specialData.data_sync_progress.statusText, isCurrency: false ,customClass: 'text-green-600 font-semibold'},
 		    { name: 'Số liệu cổng thông tin điện tử', value: specialData.data_sync_progress.value, statusText: specialData.data_sync_progress.statusText, isCurrency: false ,customClass: 'text-green-600 font-semibold'},
 		    { name: 'Báo cáo số liệu Quý I 2026', value: specialData.data_report_quarter_1_2026.value, statusText: specialData.data_report_quarter_1_2026.statusText, isCurrency: false ,customClass: 'text-green-600 font-semibold'},
+			{name: 'Tổng kết hồ sơ doanh nghiệp',value: specialData.sum_company_profile.value,statusText: specialData.sum_company_profile.statusText, isCurrency: false ,customClass: 'text-green-600 font-semibold' }
                 ];
                 
                 return { details, totalDueFormatted: formatNumberWithCommas(totalDue) + ' VND' };
@@ -347,6 +349,7 @@
                 { id: 'disbursement_progress', name: 'Tiến độ giải ngân', type: 'progress' },
                 { id: 'data_sync_progress', name: 'Tiến độ đồng bộ dữ liệu', type: 'progress' },
                 { id: 'data_sync_progress1', name: 'Số liệu cổng thông tin điện tử', type: 'progress' },                		{ id: 'data_report_quarter_1_2026', name: 'Báo cáo số liệu Quý I 2026', type: 'progress' },
+		{ id: 'sum_company_profile',name: 'Tổng kết hồ sơ doanh nghiệp',type:'progress'}
             ];
             
             let totalDue = 0;
