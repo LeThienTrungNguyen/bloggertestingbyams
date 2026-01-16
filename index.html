@@ -257,6 +257,11 @@
                     <!-- CẬP NHẬT: Xóa whitespace-nowrap và thêm break-text-word cho TotalTax -->
                     <span id="modalTotalTax" class="text-lg text-blue-600 break-text-word">0 VND</span>
                 </div>
+		<div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center font-bold text-gray-800">
+                    <span>Tổng thể doanh nghiệp</span>
+                    <!-- CẬP NHẬT: Xóa whitespace-nowrap và thêm break-text-word cho TotalTax -->
+                    <span id="sumaryBusiness" class="text-lg text-blue-600 break-text-word">0 VND</span>
+                </div>
             </div>
 
             <!-- Footer Modal -->
@@ -1099,6 +1104,7 @@
             const modal = document.getElementById('taxModal');
             const customerNameEl = document.getElementById('modalCustomerName');
             const totalTaxEl = document.getElementById('modalTotalTax');
+		const totalBusiness = document.getElementById('sumaryBusiness');
             const taxTableBody = document.getElementById('taxTableBody');
 
             if (!customer || !modal) return;
@@ -1106,6 +1112,7 @@
             // 1. Cập nhật tên và tổng số dư hiện tại
             customerNameEl.textContent = customer.name;
             totalTaxEl.textContent = customer.taxData.totalDueFormatted;
+		totalBusiness = "Hoàn tất. Đóng hồ sơ doanh nghiệp";
             
             // 2. Điền dữ liệu chi tiết vào bảng
             let tableRows = '';
